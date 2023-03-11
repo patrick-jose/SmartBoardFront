@@ -1,0 +1,23 @@
+<div>
+    <button mat-raised-button class="example-add-tab-button" (click)="addTab()">
+        <mat-icon>add_circle</mat-icon>
+        Add Board
+    </button>
+    <button mat-raised-button class="example-delete-tab-button" [disabled]="tabs.length === 1" (click)="removeTab(selected.value || 1)">
+        <mat-icon>cancel</mat-icon>
+        Delete Board
+    </button>
+</div>
+
+<mat-tab-group [selectedIndex]="selected.value" (selectedIndexChange)="selected.setValue($event)">
+    <mat-tab *ngFor="let tab of tabs; let index = index" [label]="tab">
+        <div class="board-content">
+            <app-tasks-section></app-tasks-section>
+            <app-tasks-section></app-tasks-section>
+            <app-tasks-section></app-tasks-section>
+            <app-tasks-section></app-tasks-section>
+            <app-tasks-section></app-tasks-section>
+        </div>
+    </mat-tab>
+</mat-tab-group>
+
