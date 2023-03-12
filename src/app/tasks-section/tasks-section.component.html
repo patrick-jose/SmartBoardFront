@@ -6,15 +6,13 @@
         <button *ngFor="let task of section.tasks; let i = index" mat-raised-button class="task">
             {{task.title}}
         </button>
-        <button mat-raised-button class="add-task-button" (click)="addTask(section.tasks)">
+        <button  mat-mini-fab matTooltip="Primary" color="primary"  class="add-task-button" (click)="openNewTaskDialog(section)">
             <mat-icon>add_circle</mat-icon>
-            Add Task
         </button>
     </mat-card-content>
 </mat-card>
 <div class="add-button">
-    <button mat-raised-button class="example-add-tab-button" (click)="addTab(this.sections[0])" *ngIf="editClicked">
+    <button mat-fab matTooltip="Primary" color="primary" class="example-add-tab-button" (click)="openNewStatusDialog()" *ngIf="editClicked">
         <mat-icon>add_circle</mat-icon>
-        Add Status
     </button>
 </div>

@@ -1,13 +1,13 @@
 <div id="boardButtons">
-    <button mat-raised-button class="example-add-tab-button" (click)="addTab()" *ngIf="this.editClicked">
+    <button mat-fab extended color="primary" class="example-add-tab-button" (click)="addTab()" *ngIf="this.editClicked">
         <mat-icon>add_circle</mat-icon>
         Add Board
     </button>
-    <button mat-raised-button class="example-delete-tab-button" [disabled]="tabs.length === 1" (click)="removeTab(selected.value || 1)" *ngIf="this.editClicked">
+    <button mat-fab extended color="primary" class="example-delete-tab-button" [disabled]="tabs.length === 1" (click)="removeTab(selected.value || 1)" *ngIf="this.editClicked">
         <mat-icon>cancel</mat-icon>
         Delete Board
     </button>
-    <button mat-raised-button class="example-edit-tab-button" (click)="this.editClicked = !this.editClicked;">
+    <button mat-fab extended color="primary" class="example-edit-tab-button" (click)="this.editClicked = !this.editClicked;">
         <mat-icon>edit</mat-icon>
         Edit
     </button>

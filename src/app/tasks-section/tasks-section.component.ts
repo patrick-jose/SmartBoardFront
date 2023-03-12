@@ -1,6 +1,44 @@
-import { Component, Input, Directive } from '@angular/core';
+import { Component, Inject, Input } from '@angular/core';
 import { Section } from '../section';
 import { Task } from '../task';
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+
+export interface DialogData {
+  newStatus: Section;
+  newTask: Task;
+}
+
+@Component({
+  selector: 'tasks-section-new-status.component.dialog',
+  templateUrl: 'tasks-section-new-status.component.dialog.html',
+  styleUrls: ['./tasks-section.component.css']
+})
+export class TasksSectionNewStatusComponentDialog {
+  constructor(
+    public dialogRef: MatDialogRef<TasksSectionNewStatusComponentDialog>,
+    @Inject(MAT_DIALOG_DATA) public data: DialogData, 
+    ) {}
+
+  onNoClick(): void {
+    this.dialogRef.close(false);
+  }
+}
+
+@Component({
+  selector: 'tasks-section-new-task.component.dialog',
+  templateUrl: 'tasks-section-new-task.component.dialog.html',
+  styleUrls: ['./tasks-section.component.css']
+})
+export class TasksSectionNewTaskComponentDialog {
+  constructor(
+    public dialogRef: MatDialogRef<TasksSectionNewTaskComponentDialog>,
+    @Inject(MAT_DIALOG_DATA) public data: DialogData, 
+    ) {}
+
+  onNoClick(): void {
+    this.dialogRef.close(false);
+  }
+}
 
 @Component({
   selector: 'app-tasks-section',
@@ -9,95 +47,57 @@ import { Task } from '../task';
 })
 export class TasksSectionComponent {  
   @Input() editClicked = false;
-  task: Task | undefined;
-  taskList = new Array<Task>;
-  section: Section | undefined;
   sections = new Array<Section>;
+  newStatusName = '';
+  newTask: Task = {
+    title: '',
+    position: 1,
+    description: '',
+    lastModified: new Date(),
+    comments: [],
+    blocked: false,
+    history: [],
+    assignee: '',
+    status: ''
+  };
+  constructor(public dialog: MatDialog) {}
 
-  ngOnInit() {
-    /* let i = 1;
+  openNewStatusDialog(): void {
+    const dialogRef = this.dialog.open(TasksSectionNewStatusComponentDialog, {
+      data: { newStatusName: this.newStatusName },
+    });
 
-    for (; i <= 12; i++) {
-      this.task = {
-        title: 'Task ' + i,
-        position: i
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(result);
+      if (result != false)
+      {
+        this.newStatusName = result;
+        this.addTab(this.newStatusName, 1);
       }
-      this.taskList?.push(this.task);
-    } */
-    this.section = {
-      name: 'Backlog',
-      tasks: this.taskList
-    };
-
-    this.sections.push(this.section);
-    this.taskList = [];
-    
-    /* for (; i <= 18; i++) {
-      this.task = {
-        title: 'Task ' + i,
-        position: i
-      }
-      this.taskList?.push(this.task);
-    } */
-
-    this.section = {
-      name: 'To Do',
-      tasks: this.taskList
-    };
-
-    this.sections.push(this.section);
-    this.taskList = [];
-
-    /* for (; i <= 21; i++) {
-      this.task = {
-        title: 'Task ' + i,
-        position: i
-      }
-      this.taskList?.push(this.task);
-    } */
-
-    this.section = {
-      name: 'Doing',
-      tasks: this.taskList
-    };
-
-    this.sections.push(this.section);
-    this.taskList = [];
-
-    /* for (; i <= 25; i++) {
-      this.task = {
-        title: 'Task ' + i,
-        position: i
-      }
-      this.taskList?.push(this.task);
-    } */
-
-    this.section = {
-      name: 'Done',
-      tasks: this.taskList
-    };
-
-    this.sections.push(this.section);
-    this.taskList = [];
-
-    /* for (; i <= 26; i++) {
-      this.task = {
-        title: 'Task ' + i,
-        position: i
-      }
-      this.taskList?.push(this.task);
-    } */
-
-    this.section = {
-      name: 'Testing',
-      tasks: this.taskList
-    };
-
-    this.sections.push(this.section);
-    this.taskList = [];
+      this.newStatusName = '';
+    });
   }
 
-  addTab(newSection: Section) {
+  openNewTaskDialog(section: Section): void {
+    this.newTask.status = section.name;
+    const dialogRef = this.dialog.open(TasksSectionNewTaskComponentDialog, {
+      data: { newTask: this.newTask },
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result != false)
+        this.addTask(section, result);
+      this.newTask.title = '';
+    });
+  }
+
+  addTab(name: string, position: number) {
+    let newSection: Section = {
+      name: name,
+      position: position,
+      tasks: new Array<Task>
+    };
+
     this.sections.push(newSection);
   }
 
@@ -105,22 +105,23 @@ export class TasksSectionComponent {
     this.sections.splice(index, 1);
   }
 
-  addTask(taskList: Task[]) {
-    console.log(taskList);
+  addTask(section: Section, task: Task) {
+    let newTask: Task = {
+      title: task.title,
+      position: 1,
+      description: task.description,
+      lastModified: task.lastModified,
+      comments: task.comments,
+      blocked: task.blocked,
+      history: task.history,
+      assignee: task.assignee,
+      status: task.status
+    };
 
-    if (taskList.length != 0) {
-      this.task = {
-        title: 'Task ' + (taskList[taskList.length-1].position + 1),
-        position: taskList[taskList.length-1].position + 1
-      }
-    }
-    else {
-      this.task = {
-        title: 'Task 1',
-        position: 1
-      }
+    if (section.tasks.length != 0) {
+      newTask.position = section.tasks[section.tasks.length-1].position + 1;
     }
 
-    taskList.push(this.task);
+    section.tasks.push(newTask);
   }
 }
