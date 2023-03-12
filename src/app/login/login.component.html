@@ -1,0 +1,9 @@
+<div>
+    <button mat-raised-button class="example-edit-tab-button" (click)="this.login = true" *ngIf="!this.login">
+        Login
+    </button>
+    <button mat-raised-button class="example-edit-tab-button" (click)="this.login = false">
+        Logout
+    </button>
+</div>
+<app-boards *ngIf="this.login"></app-boards>

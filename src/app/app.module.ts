@@ -10,12 +10,14 @@ import {MatNativeDateModule} from '@angular/material/core';
 import {HttpClientModule} from '@angular/common/http';
 import {MaterialModule} from '../material.module';
 import { TasksSectionComponent } from './tasks-section/tasks-section.component';
+import { LoginComponent } from './login/login.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     BoardsComponent,
-    TasksSectionComponent
+    TasksSectionComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,

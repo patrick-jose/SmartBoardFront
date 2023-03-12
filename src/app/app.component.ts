@@ -6,5 +6,10 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+  login = false;
   title = 'Smart Board';
+
+  loginSucces(loginsStatus: boolean) {
+    this.login = loginsStatus;
+  }
 }

@@ -1,3 +1,28 @@
 .board-content {
     margin: 2em;
 }
+
+.example-edit-tab-button {
+    position: absolute;
+    right: 0;
+    display: inline;
+    height: 30px;
+}
+
+.example-delete-tab-button {
+    height: 30px;
+}
+
+.example-add-tab-button {
+    height: 30px;
+}
+
+#boardButtons {
+    position: static;
+    height: 5em;
+    margin-top: 4em;
+}
+
+#board {
+    position: static;
+}

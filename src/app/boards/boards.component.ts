@@ -1,7 +1,5 @@
-import { Component } from '@angular/core';
-import { Board } from '../board';
-import { Observable, Observer } from 'rxjs';
-import {FormControl} from '@angular/forms';
+import { Component, Input } from '@angular/core';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-boards',
@@ -11,6 +9,9 @@ import {FormControl} from '@angular/forms';
 export class BoardsComponent {
   tabs = ['Board 1'];
   selected = new FormControl(0);
+  editClicked = false;
+  
+  @Input() loginSucces = false;
 
   addTab() {
     this.tabs.push('Board ' + (this.tabs.length + 1));
