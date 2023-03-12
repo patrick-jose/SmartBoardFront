@@ -1,31 +1,38 @@
+<h2 mat-dialog-title>New Task</h2>
 <div mat-dialog-content style="width: 100%;">
     <mat-form-field appearance="fill" style="width: 100%;">
         <mat-label>New task name:</mat-label>
         <input matInput [(ngModel)]="data.newTask.title">
     </mat-form-field>
-    <p style="width: 50%; display: inline-grid; float: right;">
-        Status: {{data.newTask.status}}
-        <br>
-        <mat-form-field appearance="fill">
-            <mat-label>Assignee</mat-label>
-            <mat-select>
-              <mat-option value="option">User 1</mat-option>
-              <mat-option value="option">User 2</mat-option>
-              <mat-option value="option">User 3</mat-option>
-              <mat-option value="option">User 4</mat-option>
-            </mat-select>
-            <mat-hint align="end">Users ^</mat-hint>
-          </mat-form-field>
-    </p>
-    <mat-form-field appearance="fill" style=" width: 48%; display: inline-grid; float: left;">
-        <mat-label matInput>Description:</mat-label>
-        <textarea matInput matInput [(ngModel)]="data.newTask.description"></textarea>
-    </mat-form-field> 
-    <mat-form-field appearance="fill" style=" width: 48%; display: inline-grid; float: left;">
-        <mat-label>Comments:</mat-label>
-        <textarea matInput matInput [(ngModel)]="data.newTask.comments"></textarea>
-    </mat-form-field>   
-    <mat-slide-toggle color="primary" style="width: 50%; display: inline-grid; float: right;">Blocked?</mat-slide-toggle>
+    <div style="width: 50%; display: inline-grid; float: right;">
+        <p>
+            Status: {{data.newTask.status}}
+            <br>
+            <mat-form-field appearance="fill" style="width: 70%;">
+                <mat-label>Assignee</mat-label>
+                <mat-select>
+                <mat-option value="option">User 1</mat-option>
+                <mat-option value="option">User 2</mat-option>
+                <mat-option value="option">User 3</mat-option>
+                <mat-option value="option">User 4</mat-option>
+                </mat-select>
+                <mat-hint align="end">Users ^</mat-hint>
+            </mat-form-field>
+        </p>
+        <mat-slide-toggle color="primary" style="width: 50%; display: inline-grid; float: right;">
+            Blocked?
+        </mat-slide-toggle>
+    </div>
+    <div style=" width: 48%; float: left;">
+        <mat-form-field appearance="fill" style=" width: 100%;">
+            <mat-label matInput>Description:</mat-label>
+            <textarea matInput matInput [(ngModel)]="data.newTask.description"></textarea>
+        </mat-form-field> 
+        <mat-form-field appearance="fill" style="width: 100%;">
+            <mat-label>Comments:</mat-label>
+            <textarea matInput matInput [(ngModel)]="data.newTask.comments"></textarea>
+        </mat-form-field>   
+    </div>
 </div>
 <div mat-dialog-actions style="justify-content: center; padding: 0px 0px 10px 10px;">
     <button mat-raised-button (click)="onNoClick()">Discard</button>
