@@ -3,7 +3,7 @@
         <mat-card-title>{{section.name}}</mat-card-title>    
     </mat-card-header>
     <mat-card-content>
-        <button *ngFor="let task of section.tasks; let i = index" mat-raised-button class="task">
+        <button *ngFor="let task of section.tasks; let i = index" mat-raised-button class="task" (click)="openTaskDetails(task)">
             {{task.title}}
         </button>
         <button  mat-mini-fab matTooltip="Primary" color="primary"  class="add-task-button" (click)="openNewTaskDialog(section)">

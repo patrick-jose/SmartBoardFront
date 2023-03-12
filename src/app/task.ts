@@ -5,7 +5,8 @@ export interface Task {
     lastModified: Date,
     comments: String[],
     blocked: boolean,
-    history: History[],
+    history: String[],
     assignee: String,
-    status: String
+    status: String,
+    creator: String
 }

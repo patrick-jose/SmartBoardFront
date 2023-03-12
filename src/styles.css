@@ -1,8 +1,9 @@
 /* Application-wide Styles */
 h1 {
-    font-family: Arial, Helvetica, sans-serif !important;
+    font-family: optima, sans-serif !important;
     font-size: 250% !important;
-    color: #A965DA;
+    color: #561F7B;
+    font-weight: bold !important;
   }
   h2, h3 {
     font-family: Arial, Helvetica, sans-serif;

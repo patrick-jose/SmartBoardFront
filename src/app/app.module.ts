@@ -9,7 +9,8 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatNativeDateModule} from '@angular/material/core';
 import {HttpClientModule} from '@angular/common/http';
 import {MaterialModule} from '../material.module';
-import { TasksSectionComponent, TasksSectionNewStatusComponentDialog, TasksSectionNewTaskComponentDialog } from './tasks-section/tasks-section.component';
+import { TasksSectionComponent, TasksSectionNewStatusComponentDialog, 
+          TasksSectionNewTaskComponentDialog, TasksSectionTaskDetailsComponentDialog } from './tasks-section/tasks-section.component';
 import { LoginComponent } from './login/login.component';
 
 @NgModule({
@@ -19,7 +20,8 @@ import { LoginComponent } from './login/login.component';
     TasksSectionComponent,
     LoginComponent,
     TasksSectionNewStatusComponentDialog, 
-    TasksSectionNewTaskComponentDialog
+    TasksSectionNewTaskComponentDialog,
+    TasksSectionTaskDetailsComponentDialog
   ],
   imports: [
     BrowserModule,

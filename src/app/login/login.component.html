@@ -1,9 +1,30 @@
-<div>
-    <button mat-raised-button class="example-edit-tab-button" (click)="this.login = true" *ngIf="!this.login">
-        Login
-    </button>
-    <button mat-raised-button class="example-edit-tab-button" (click)="this.login = false">
+<mat-card id="card-login" *ngIf="!user.login">
+    <mat-card-header>
+        <mat-card-title>Login</mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="card-login-content">
+        <mat-form-field appearance="fill" class="login-form">
+          <mat-label>Enter your user name:</mat-label>
+          <input matInput [(ngModel)]="user.name" placeholder="username" [formControl]="username" required>
+          <mat-error *ngIf="username.invalid">{{getErrorMessage()}}</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="fill" class="password login-form">
+            <mat-label>Enter your password</mat-label>
+            <input matInput [(ngModel)]="user.password" [type]="hide ? 'password' : 'text'">
+            <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+              <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+            </button>
+          </mat-form-field>
+    </mat-card-content>
+    <mat-card-actions align="end">
+        <button mat-raised-button class="example-edit-tab-button" (click)="changeLoginStatus(user)" *ngIf="!user.login">
+            Login
+        </button>
+    </mat-card-actions>
+</mat-card>
+<div style="width: 100%; text-align: end;">
+    <button mat-raised-button class="example-logout-tab-button" (click)="user.login = false" *ngIf="user.login">
         Logout
     </button>
 </div>
-<app-boards *ngIf="this.login"></app-boards>
+<app-boards *ngIf="user.login"></app-boards>

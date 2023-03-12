@@ -1,0 +1,65 @@
+<mat-card-header>
+    <mat-card-title>{{data.task.title}}</mat-card-title>
+    <mat-card-subtitle>{{data.task.description}}</mat-card-subtitle>
+</mat-card-header>
+<div mat-dialog-content style="width: 100%;">
+    <mat-card-content>
+        <p *ngFor="let comment of data.task.comments" >
+          {{comment}}
+        </p>
+        <p>
+            Assigned to: {{data.task.assignee}}
+        </p>
+        <p *ngFor="let history of data.task.history">
+            History:
+            <br>
+            <br>
+            {{history}}
+        </p>
+        <p>
+            Blocked: {{data.task.blocked ? ' Yes' : ' No'}}
+        </p>
+        <button mat-mini-fab matTooltip="Primary" color="primary">
+            <mat-icon>edit</mat-icon>
+        </button>
+    </mat-card-content>
+
+    <mat-form-field appearance="fill" style="width: 100%;" *ngIf="false">
+        <mat-label>Task name:</mat-label>
+        <input matInput [(ngModel)]="data.task.title">
+    </mat-form-field>
+    <div style="width: 50%; display: inline-grid; float: right;" *ngIf="false">
+        <p>
+            Status: {{data.newTask.status}}
+            <br>
+            <mat-form-field appearance="fill" style="width: 70%;">
+                <mat-label>Assignee</mat-label>
+                <mat-select>
+                <mat-option value="option">User 1</mat-option>
+                <mat-option value="option">User 2</mat-option>
+                <mat-option value="option">User 3</mat-option>
+                <mat-option value="option">User 4</mat-option>
+                </mat-select>
+                <mat-hint align="end">Users ^</mat-hint>
+            </mat-form-field>
+        </p>
+        <mat-slide-toggle color="primary" style="width: 50%; display: inline-grid; float: right;">
+            Blocked?
+        </mat-slide-toggle>
+    </div>
+    <div style=" width: 48%; float: left;" *ngIf="false">
+        <mat-form-field appearance="fill" style=" width: 100%;">
+            <mat-label matInput>Description:</mat-label>
+            <textarea matInput matInput [(ngModel)]="data.newTask.description"></textarea>
+        </mat-form-field> 
+        <mat-form-field appearance="fill" style="width: 100%;">
+            <mat-label>Comments:</mat-label>
+            <textarea matInput matInput [(ngModel)]="data.newTask.comments"></textarea>
+        </mat-form-field>   
+    </div>
+</div>
+<div mat-dialog-actions style="justify-content: center; padding: 0px 0px 10px 10px;" *ngIf="false">
+    <button mat-raised-button (click)="onNoClick()">Discard</button>
+    <button mat-raised-button [mat-dialog-close]="data.newTask" cdkFocusInitial>Create</button>
+</div>
+  

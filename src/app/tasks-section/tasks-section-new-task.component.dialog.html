@@ -19,7 +19,7 @@
                 <mat-hint align="end">Users ^</mat-hint>
             </mat-form-field>
         </p>
-        <mat-slide-toggle color="primary" style="width: 50%; display: inline-grid; float: right;">
+        <mat-slide-toggle color="primary" (click)="setBlocked()" [checked]="data.newTask.blocked" style="width: 50%; display: inline-grid; float: right;">
             Blocked?
         </mat-slide-toggle>
     </div>
@@ -30,7 +30,7 @@
         </mat-form-field> 
         <mat-form-field appearance="fill" style="width: 100%;">
             <mat-label>Comments:</mat-label>
-            <textarea matInput matInput [(ngModel)]="data.newTask.comments"></textarea>
+            <textarea matInput matInput [(ngModel)]="data.newTask.comments[0]"></textarea>
         </mat-form-field>   
     </div>
 </div>

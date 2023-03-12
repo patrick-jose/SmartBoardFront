@@ -1,0 +1,41 @@
+#card-login {
+    margin: auto; 
+    margin-top: 200px; 
+    width: 50%;
+}
+
+@media screen and (max-width: 700px) {
+    #card-login {
+        width: 85%;
+    }
+    .card-login-content {
+        text-align: center;
+        margin: 0px 0px 0px 0px;
+    }
+    .login-form {
+        width: 100% !important;
+    }
+}
+
+@media screen and (max-width: 200px) {
+    .example-edit-tab-button {
+        margin-right: 0px;
+    }
+}
+
+.password button {
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-right: 10px;
+}
+
+.card-login-content {
+    text-align: center;
+    margin: 50px 0px 0px 0px;
+}
+
+.login-form {
+    width: 256px;
+    display: block;
+    margin: auto;
+}

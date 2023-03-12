@@ -1,4 +1,6 @@
 import { Component, Output, EventEmitter } from '@angular/core';
+import { FormControl, Validators } from '@angular/forms';
+import { User } from '../user';
 
 @Component({
   selector: 'app-login',
@@ -6,11 +8,28 @@ import { Component, Output, EventEmitter } from '@angular/core';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  login = false;
+  user: User = {
+    name: '',
+    password: '',
+    login: false
+  };
 
   @Output() loginSucessEvent = new EventEmitter<boolean>();
 
-  changeLoginStatus() {
-    this.loginSucessEvent.emit(this.login);
+  username = new FormControl('', [Validators.required]);
+  hide = true;
+
+  getErrorMessage() {
+    if (this.username.hasError('required')) {
+      return 'You must enter a user name';
+    }
+
+    return this.username.hasError('username') ? 'Not a valid username' : '';
+  }
+
+  changeLoginStatus(user: User) {
+    if (user.name != '' && user.password != '')
+      user.login = true;
+    this.loginSucessEvent.emit(user.login);
   }
 }
