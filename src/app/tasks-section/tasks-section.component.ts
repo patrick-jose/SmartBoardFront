@@ -8,6 +8,7 @@ export interface DialogData {
   newStatus: Section;
   newTask: Task;
   task: Task;
+  sections: Section[];
 }
 
 @Component({
@@ -61,6 +62,12 @@ export class TasksSectionTaskDetailsComponentDialog {
   onNoClick(): void {
     this.dialogRef.close(false);
   }
+
+  editEnabled = false;
+
+  editTask(){
+    this.editEnabled = !this.editEnabled;
+  }
 }
 
 @Component({
@@ -89,6 +96,7 @@ export class TasksSectionComponent {
     status: '',
     creator: this.user.name
   };
+
   constructor(public dialog: MatDialog) {}
 
   openNewStatusDialog(): void {
@@ -128,9 +136,61 @@ export class TasksSectionComponent {
 
   openTaskDetailsDialog(task: Task): void {
     const dialogRef = this.dialog.open(TasksSectionTaskDetailsComponentDialog, {
-      data: { task: task },
+      data: { task: task, sections: this.sections },
     });
   }
+
+  /* newMockTask1: Task = {
+    title: 'Mock task1',
+    position: 1,
+    description: `Lorem ipsum dolor sit amet. Est provident voluptatem cum atque quisquam est iste consequatur in voluptas recusandae. Aut tempore adipisci est quidem recusandae et eveniet quia.                 
+                  Et rerum rerum qui quos quaerat et aspernatur libero id galisum facere et facere iure. Non mollitia repellat eum esse corrupti et voluptas tempora sit neque iusto et porro obcaecati eum molestias delectus et atque excepturi. 
+                  Ab velit laudantium sed rerum iste ut omnis sunt a temporibus galisum sed asperiores sunt est error ipsa non odio dignissimos. Sed dolor sunt ea nobis doloremque ut similique doloribus aut blanditiis perferendis sit vero laborum ut enim possimus. Sed dicta error qui error maxime qui atque voluptatem aut nisi temporibus qui quas expedita quo quidem vitae aut galisum dolorum.`,
+    lastModified: new Date(),
+    comments: ['Lorem ipsum dolor sit amet. Est provident voluptatem cum atque quisquam est iste consequatur in voluptas recusandae. Aut tempore adipisci est quidem recusandae et eveniet quia.',
+                'Et rerum rerum qui quos quaerat et aspernatur libero id galisum facere et facere iure. Non mollitia repellat eum esse corrupti et voluptas tempora sit neque iusto et porro obcaecati eum molestias delectus et atque excepturi.',
+                'Ab velit laudantium sed rerum iste ut omnis sunt a temporibus galisum sed asperiores sunt est error ipsa non odio dignissimos. Sed dolor sunt ea nobis doloremque ut similique doloribus aut blanditiis perferendis sit vero laborum ut enim possimus. Sed dicta error qui error maxime qui atque voluptatem aut nisi temporibus qui quas expedita quo quidem vitae aut galisum dolorum.'
+              ],
+    blocked: false,
+    history: ['Lorem ipsum dolor sit amet.', 'Lorem ipsum dolor sit amet.', 'Lorem ipsum dolor sit amet.'],
+    assignee: 'Patrick',
+    status: 'Mock Status',
+    creator: this.user.name
+  };
+
+  newMockTask2: Task = {
+    title: 'Mock task2',
+    position: 2,
+    description: '',
+    lastModified: new Date(),
+    comments: [],
+    blocked: false,
+    history: [],
+    assignee: '',
+    status: 'Mock Status',
+    creator: this.user.name
+  };
+
+  newMockTask3: Task = {
+    title: 'Mock task2',
+    position: 3,
+    description: '',
+    lastModified: new Date(),
+    comments: [],
+    blocked: false,
+    history: [],
+    assignee: '',
+    status: 'Mock Status',
+    creator: this.user.name
+  };
+
+  mockTaskList: Array<Task> = [this.newMockTask1, this.newMockTask2, this.newMockTask3];
+
+  mockSection: Section = {
+    position: 1,
+    name: 'Mock Status',
+    tasks: this.mockTaskList 
+  } */
 
   addTab(name: string, position: number) {
     let newSection: Section = {

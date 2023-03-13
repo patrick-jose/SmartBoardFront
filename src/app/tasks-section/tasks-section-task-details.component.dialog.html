@@ -1,65 +1,95 @@
-<mat-card-header>
-    <mat-card-title>{{data.task.title}}</mat-card-title>
-    <mat-card-subtitle>{{data.task.description}}</mat-card-subtitle>
-</mat-card-header>
-<div mat-dialog-content style="width: 100%;">
-    <mat-card-content>
-        <p *ngFor="let comment of data.task.comments" >
-          {{comment}}
-        </p>
-        <p>
-            Assigned to: {{data.task.assignee}}
-        </p>
-        <p *ngFor="let history of data.task.history">
-            History:
-            <br>
-            <br>
-            {{history}}
-        </p>
-        <p>
-            Blocked: {{data.task.blocked ? ' Yes' : ' No'}}
-        </p>
-        <button mat-mini-fab matTooltip="Primary" color="primary">
-            <mat-icon>edit</mat-icon>
-        </button>
-    </mat-card-content>
-
-    <mat-form-field appearance="fill" style="width: 100%;" *ngIf="false">
+<div style="width: 1000px; display:table-cell">
+    <h2 mat-dialog-title *ngIf="!editEnabled">{{data.task.title}}</h2>
+    <mat-form-field mat-dialog-title appearance="fill" style="width: 100%; margin-top: 20px;" *ngIf="editEnabled">
         <mat-label>Task name:</mat-label>
         <input matInput [(ngModel)]="data.task.title">
     </mat-form-field>
-    <div style="width: 50%; display: inline-grid; float: right;" *ngIf="false">
-        <p>
-            Status: {{data.newTask.status}}
-            <br>
-            <mat-form-field appearance="fill" style="width: 70%;">
-                <mat-label>Assignee</mat-label>
-                <mat-select>
-                <mat-option value="option">User 1</mat-option>
-                <mat-option value="option">User 2</mat-option>
-                <mat-option value="option">User 3</mat-option>
-                <mat-option value="option">User 4</mat-option>
-                </mat-select>
-                <mat-hint align="end">Users ^</mat-hint>
+    <div mat-dialog-content style="width: 100%;">
+        <mat-card-content style="float: right; width: 40%;" class="card-section">
+
+            <div *ngIf="editEnabled">
+                <p>
+                    <mat-form-field appearance="fill" style="width: 100%;">
+                        <mat-label>Status</mat-label>
+                        <mat-select>
+                        <mat-option value="option" *ngFor="let section of data.sections">{{section.name}}</mat-option>
+                        </mat-select>
+                        <mat-hint align="end">Status ^</mat-hint>
+                    </mat-form-field>
+                    <br>
+                    <mat-form-field appearance="fill" style="width: 100%;">
+                        <mat-label>Assignee</mat-label>
+                        <mat-select>
+                        <mat-option value="option">User 1</mat-option>
+                        <mat-option value="option">User 2</mat-option>
+                        <mat-option value="option">User 3</mat-option>
+                        <mat-option value="option">User 4</mat-option>
+                        </mat-select>
+                        <mat-hint align="end">Users ^</mat-hint>
+                    </mat-form-field>
+                </p>
+            </div>
+
+            <mat-card-content class="dialog-task" *ngIf="!editEnabled">
+                <b style="display: contents;">Assigned to: </b>{{data.task.assignee}}
+            </mat-card-content>
+            <mat-card-content class="dialog-task" *ngIf="!editEnabled">
+                <b style="display: contents;">Status: </b>{{data.task.status}}
+            </mat-card-content>
+            <mat-card-header class="dialog-task">
+                <mat-card-title>
+                    History:
+                </mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="dialog-task">
+                <p *ngFor="let history of data.task.history">
+                    {{history}}
+                </p>
+            </mat-card-content>
+            <p class="dialog-task" *ngIf="!editEnabled">
+                <b style="display: contents;">Blocked: </b>{{data.task.blocked ? ' Yes' : ' No'}}
+            </p>
+            <mat-slide-toggle color="primary" class="dialog-task" [(ngModel)]="data.task.blocked" *ngIf="editEnabled">Blocked?</mat-slide-toggle>
+        </mat-card-content>
+
+        <mat-card-content style="float: left; width: 60%;" class="card-section">
+            <mat-form-field appearance="fill" style="width: 95%; margin: auto;" *ngIf="editEnabled">
+                <mat-label matInput>Description:</mat-label>
+                <textarea matInput matInput [(ngModel)]="data.task.description"></textarea>
+            </mat-form-field> 
+            <h3 mat-dialog-subtitle style="margin: 0px 0px 0px 25px;" *ngIf="!editEnabled">{{data.task.description}}</h3>
+            <mat-card-header style="padding: 40px 0px 20px 0px;">
+                <mat-card-title>Comments</mat-card-title>
+            </mat-card-header>
+            <mat-form-field appearance="fill" style="width: 95%; margin: auto;">
+                <textarea matInput></textarea>
             </mat-form-field>
-        </p>
-        <mat-slide-toggle color="primary" style="width: 50%; display: inline-grid; float: right;">
-            Blocked?
-        </mat-slide-toggle>
+            <button mat-mini-fab matTooltip="Send" color="primary" style="right: -91%;">
+                <mat-icon>send</mat-icon>   
+            </button>
+            <mat-card-content style="padding: 30px 10px 10px 10px;">
+                <p *ngFor="let comment of data.task.comments" class="comments-section">
+                {{comment}}
+                </p>
+            </mat-card-content>
+        </mat-card-content>
+        <button mat-mini-fab matTooltip="Edit" color="primary" class="edit-button" (click)="editTask()">
+            <mat-icon>edit</mat-icon>
+        </button>
+
+
+
+        
+        <div style=" width: 48%; float: left;" *ngIf="false">       
+            <mat-form-field appearance="fill" style="width: 100%;">
+                <mat-label>Comments:</mat-label>
+                <textarea matInput matInput [(ngModel)]="data.newTask.comments"></textarea>
+            </mat-form-field>   
+        </div>
     </div>
-    <div style=" width: 48%; float: left;" *ngIf="false">
-        <mat-form-field appearance="fill" style=" width: 100%;">
-            <mat-label matInput>Description:</mat-label>
-            <textarea matInput matInput [(ngModel)]="data.newTask.description"></textarea>
-        </mat-form-field> 
-        <mat-form-field appearance="fill" style="width: 100%;">
-            <mat-label>Comments:</mat-label>
-            <textarea matInput matInput [(ngModel)]="data.newTask.comments"></textarea>
-        </mat-form-field>   
+    <div mat-dialog-actions style="justify-content: center; padding: 0px 0px 10px 10px;" *ngIf="false">
+        <button mat-raised-button (click)="onNoClick()">Discard</button>
+        <button mat-raised-button cdkFocusInitial>Save</button>
     </div>
-</div>
-<div mat-dialog-actions style="justify-content: center; padding: 0px 0px 10px 10px;" *ngIf="false">
-    <button mat-raised-button (click)="onNoClick()">Discard</button>
-    <button mat-raised-button [mat-dialog-close]="data.newTask" cdkFocusInitial>Create</button>
 </div>
   

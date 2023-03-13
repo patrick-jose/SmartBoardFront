@@ -60,3 +60,31 @@ h2 {
     position: relative !important;
     justify-content: start !important;
 }
+
+.edit-button {
+    position: absolute;
+    bottom: 10px;
+    right: 0px;
+}
+
+.dialog-task {
+    display: inline-grid; 
+    padding: 0px 0px 40px 30px;
+}
+
+.card-section {
+    padding: 0px 0px 0px 0px; 
+    float: right; 
+    display: inline-grid;
+}
+
+.comments-section {
+    border-radius: 10px;
+    padding: 10px;
+    background-color: #673ab7;
+    color: white;
+}
+
+.send-button {
+    right: -91%
+}
