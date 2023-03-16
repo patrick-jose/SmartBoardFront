@@ -4,6 +4,7 @@ import { Task } from '../classes/task';
 import { User } from '../classes/user';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MyDataService } from '../services/my-data.service';
+import { StatusHistory } from "../classes/statusHistory";
 
 export interface DialogData {
   newStatus: Section;
@@ -84,7 +85,7 @@ export class TasksSectionTaskDetailsComponentDialog {
   styleUrls: ['./tasks-section.component.css']
 })
 export class TasksSectionComponent implements OnInit {
-  sections : Array<Section> | undefined;
+  sections : Array<Section> = [];
 
   constructor(public dialog: MatDialog, private myDataService: MyDataService) {
     sections : Array<Section>;
@@ -101,33 +102,49 @@ export class TasksSectionComponent implements OnInit {
     sections.forEach(section => {
       this.myDataService.getAllTasksBySectionId(section.id).subscribe((data) => {
         section.tasks = data;
-        this.loadComments(section.tasks);
-        this.loadAssignee(section.tasks);
+
+        section.tasks.forEach(task => {
+          this.loadComments(task);
+          this.loadAssignee(task);
+          this.loadStatusHistory(task, sections);
+        });
+
+        this.loadSection(section.tasks, section);
       })
     });
   };
 
-  loadComments(tasks : Array<Task>) {
+  loadSection(tasks : Array<Task>, section : Section) {
     tasks.forEach(task => {
-      this.myDataService.getAllCommentsByTaskId(task.id).subscribe((data) => {
-        task.comments = data;
-      })
+        task.section = section.name;
+    });
+  }
+
+  loadComments(task : Task) {
+    this.myDataService.getAllCommentsByTaskId(task.id).subscribe((data) => {
+      task.comments = data;
     });
   };
 
-  loadAssignee(tasks : Array<Task>) {
-    tasks.forEach(task => {
+  loadAssignee(task : Task) {
+    if (task.assigneeId != undefined && task.assigneeId > 0)
       this.myDataService.getUserById(task.assigneeId).subscribe((data) => {
         task.assignee = data;
       })
-    });
+    else
+    {
+      task.assignee = this.emptyUser;
+      task.assignee.name = 'Unassigned'
+    }
   };
 
-  loadStatusHistory(tasks : Array<Task>) {
-    tasks.forEach(task => {
-      this.myDataService.getAllCommentsByTaskId(task.id).subscribe((data) => {
-        task.comments = data;
-      })
+  loadStatusHistory(task : Task, sections: Array<Section>) {
+    this.myDataService.getStatusHistoryByTaskId(task.id).subscribe((data) => {
+      data.forEach(d => {
+        d.actualSectionName = sections.find(s => s.id = d.actualSectionId)?.name;
+        d.previousSectionName = sections.find(s => s.id = d.previousSectionId)?.name;
+      });
+      task.history = data;
     });
   };
 
@@ -157,7 +174,7 @@ export class TasksSectionComponent implements OnInit {
     blocked: false,
     history: [],
     assigneeId: 0,
-    status: '',
+    section: '',
     creatorName: this.user.name,
     creatorId: this.user.id,
     id: 0,
@@ -182,11 +199,21 @@ export class TasksSectionComponent implements OnInit {
     });
   }
 
-  openNewTaskDialog(section: Section): void {
-    this.newTask.status = section.name;
+  openNewTaskDialog(section: Section): void { 
+    let statushistory : StatusHistory = {
+      userId: this.user.id,
+      previousSectionId: 0,
+      actualSectionId: 0,
+      dateModified: new Date(),
+      taskId: 0,
+      previousSectionName: section.name,
+      actualSectionName: section.name
+    };
+
+    this.newTask.section = section.name;
     this.newTask.creatorName = this.user.name;
     this.newTask.description = '';
-    this.newTask.history.push('Created by ' + this.newTask.creatorName + ' at ' + new Date());
+    this.newTask.history.push(statushistory);
     this.newTask.blocked = false;
 
     const dialogRef = this.dialog.open(TasksSectionNewTaskComponentDialog, {
@@ -217,11 +244,11 @@ export class TasksSectionComponent implements OnInit {
       tasks: new Array<Task>
     };
 
-    //this.sections.push(newSection);
+    this.sections.push(newSection);
   }
 
   removeTab(index: number) {
-    //this.sections.splice(index, 1);
+    this.sections.splice(index, 1);
   }
 
   addTask(section: Section, task: Task) {
@@ -234,7 +261,7 @@ export class TasksSectionComponent implements OnInit {
       blocked: task.blocked,
       history: task.history,
       assigneeId: task.assigneeId,
-      status: task.status,
+      section: task.section,
       creatorId: task.creatorId,
       id: task.id,
       dateCreation: task.dateCreation,

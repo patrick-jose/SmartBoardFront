@@ -27,20 +27,25 @@
                 </p>
             </div>
 
-            <mat-card-content class="dialog-task" *ngIf="!editEnabled">
-                <b style="display: contents;">Assigned to: </b>{{data.task.assigneeId}}
+            <mat-card-content class="dialog-task" *ngIf="!editEnabled && data.task.assignee.name != undefined">
+                <b style="display: contents;">Assigned to: </b>{{data.task.assignee.name}}
             </mat-card-content>
             <mat-card-content class="dialog-task" *ngIf="!editEnabled">
-                <b style="display: contents;">Status: </b>{{data.task.status}}
+                <b style="display: contents;">Status: </b>{{data.task.section}}
             </mat-card-content>
-            <mat-card-header class="dialog-task">
-                <mat-card-title>
+            <mat-card-header>
+                <mat-card-title style="padding: 0px 0px 5px 13px;">
                     History:
                 </mat-card-title>
             </mat-card-header>
-            <mat-card-content class="dialog-task">
+            <mat-card-content class="dialog-task" style="font-size: 15px;">
+                <span>Created At: {{data.task.dateCreation | date:'dd/MM/yyyy HH:mm:ss'}}</span>
                 <p *ngFor="let history of data.task.history">
-                    {{history}}
+                    Date Modified: {{history.dateModified | date:'dd/MM/yyyy HH:mm:ss'}}
+                    <br>
+                    From Status: {{history.previousSectionName}}
+                    <br>
+                    To Status: {{history.actualSectionName}}
                 </p>
             </mat-card-content>
             <p class="dialog-task" *ngIf="!editEnabled">
@@ -52,7 +57,7 @@
         <mat-card-content style="float: left; width: 60%;" class="card-section">
             <mat-form-field appearance="fill" style="width: 95%; margin: auto;" *ngIf="editEnabled">
                 <mat-label matInput>Description:</mat-label>
-                <textarea matInput matInput [(ngModel)]="data.task.description"></textarea>
+                <textarea matInput [(ngModel)]="data.task.description"></textarea>
             </mat-form-field> 
             <h3 mat-dialog-subtitle style="margin: 0px 0px 0px 25px;" *ngIf="!editEnabled">{{data.task.description}}</h3>
             <mat-card-header style="padding: 40px 0px 20px 0px;">

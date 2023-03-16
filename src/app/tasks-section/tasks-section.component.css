@@ -88,3 +88,7 @@ h2 {
 .send-button {
     right: -91%
 }
+
+.task-blocked {
+    background-color: #F56868;
+}

@@ -5,6 +5,7 @@ import { Board } from '../classes/board';
 import { Task } from '../classes/task';
 import { CommentDTO } from '../classes/commentDTO';
 import { User } from '../classes/user';
+import { StatusHistory } from '../classes/statusHistory';
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +19,9 @@ export class MyDataService {
   }
   getAllSections() {
     return this.http.get<Array<Section>>('https://localhost:7068/api/Section/GetAllSections');
+  }
+  getSectionById(sectionId : number) {
+    return this.http.get<Section>('https://localhost:7068/api/Section/GetSectionById?id=' + sectionId);
   }
   getAllSectionsByBoardId(boardId: number) {
     return this.http.get<Array<Section>>('https://localhost:7068/api/Section/GetAllSectionsByBoardId?boardId=' + boardId);
@@ -33,5 +37,8 @@ export class MyDataService {
   }
   getUserById(userId: number) {
     return this.http.get<User>('https://localhost:7068/api/User?id=' + userId);
+  }
+  getStatusHistoryByTaskId(taskId: number) {
+    return this.http.get<Array<StatusHistory>>('https://localhost:7068/api/StatusHistory/GetStatusHistoryByTaskId?taskId=' + taskId);
   }
 }

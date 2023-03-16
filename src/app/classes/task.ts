@@ -1,4 +1,5 @@
 import { CommentDTO } from "./commentDTO";
+import { StatusHistory } from "./statusHistory";
 import { User } from "./user";
 
 export interface Task {
@@ -8,9 +9,9 @@ export interface Task {
     lastModified: Date,
     comments: Array<CommentDTO>,
     blocked: boolean,
-    history: String[],
+    history: Array<StatusHistory>,
     assigneeId: number,
-    status: String,
+    section: String,
     creatorId: number,
     id: number,
     dateCreation: Date,

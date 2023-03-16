@@ -5,7 +5,7 @@
     <mat-card-content class="card-login-content">
         <mat-form-field appearance="fill" class="login-form">
           <mat-label>Enter your user name:</mat-label>
-          <input matInput [(ngModel)]="user.name" placeholder="username" [formControl]="username" required>
+          <input matInput [(ngModel)]="user.name" placeholder="username" required>
           <mat-error *ngIf="username.invalid">{{getErrorMessage()}}</mat-error>
         </mat-form-field>
         <mat-form-field appearance="fill" class="password login-form">
