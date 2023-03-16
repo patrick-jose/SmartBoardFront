@@ -1,6 +1,6 @@
 import { Component, Output, EventEmitter } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { User } from '../user';
+import { User } from '../classes/user';
 
 @Component({
   selector: 'app-login',
@@ -11,7 +11,8 @@ export class LoginComponent {
   user: User = {
     name: '',
     password: '',
-    login: false
+    login: false,
+    id: 0
   };
 
   @Output() loginSucessEvent = new EventEmitter<boolean>();

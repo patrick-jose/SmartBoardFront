@@ -1,14 +1,16 @@
-import { Component, Inject, Input } from '@angular/core';
-import { Section } from '../section';
-import { Task } from '../task';
-import { User } from '../user';
+import { Component, Inject, Input, OnInit } from '@angular/core';
+import { Section } from '../classes/section';
+import { Task } from '../classes/task';
+import { User } from '../classes/user';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MyDataService } from '../services/my-data.service';
 
 export interface DialogData {
   newStatus: Section;
   newTask: Task;
   task: Task;
   sections: Section[];
+  users: Array<User>;
 }
 
 @Component({
@@ -44,7 +46,6 @@ export class TasksSectionNewTaskComponentDialog {
 
   setBlocked(){
     this.data.newTask.blocked = !this.data.newTask.blocked
-    console.log(this.data.newTask.blocked);
   }
 }
 
@@ -56,11 +57,18 @@ export class TasksSectionNewTaskComponentDialog {
 export class TasksSectionTaskDetailsComponentDialog {
   constructor(
     public dialogRef: MatDialogRef<TasksSectionTaskDetailsComponentDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData, 
+    @Inject(MAT_DIALOG_DATA) public data: DialogData,
+    private myDataService: MyDataService 
     ) {}
 
   onNoClick(): void {
     this.dialogRef.close(false);
+  }
+
+  ngOnInit(): void {
+    this.myDataService.getAllUsers().subscribe((data) => {
+      this.data.users = data;
+    });
   }
 
   editEnabled = false;
@@ -75,29 +83,89 @@ export class TasksSectionTaskDetailsComponentDialog {
   templateUrl: './tasks-section.component.html',
   styleUrls: ['./tasks-section.component.css']
 })
-export class TasksSectionComponent {
+export class TasksSectionComponent implements OnInit {
+  sections : Array<Section> | undefined;
+
+  constructor(public dialog: MatDialog, private myDataService: MyDataService) {
+    sections : Array<Section>;
+  }
+
+  ngOnInit(): void {
+    this.myDataService.getAllSectionsByBoardId(this.boardId).subscribe((data) => {
+      this.sections = data;
+      this.loadTasks(this.sections);
+    });
+  }
+
+  loadTasks(sections : Array<Section>) {
+    sections.forEach(section => {
+      this.myDataService.getAllTasksBySectionId(section.id).subscribe((data) => {
+        section.tasks = data;
+        this.loadComments(section.tasks);
+        this.loadAssignee(section.tasks);
+      })
+    });
+  };
+
+  loadComments(tasks : Array<Task>) {
+    tasks.forEach(task => {
+      this.myDataService.getAllCommentsByTaskId(task.id).subscribe((data) => {
+        task.comments = data;
+      })
+    });
+  };
+
+  loadAssignee(tasks : Array<Task>) {
+    tasks.forEach(task => {
+      this.myDataService.getUserById(task.assigneeId).subscribe((data) => {
+        task.assignee = data;
+      })
+    });
+  };
+
+  loadStatusHistory(tasks : Array<Task>) {
+    tasks.forEach(task => {
+      this.myDataService.getAllCommentsByTaskId(task.id).subscribe((data) => {
+        task.comments = data;
+      })
+    });
+  };
+
   @Input() user: User = {
     name: '',
     password: '',
-    login: false
+    login: false,
+    id: 0
   };
   @Input() editClicked = false;
-  sections = new Array<Section>;
+  @Input() boardId = 1;
   newStatusName = '';
+  
+  emptyUser: User = {
+    name: '',
+    password: '',
+    login: false,
+    id: 0
+  };
+
   newTask: Task = {
-    title: '',
+    name: '',
     position: 1,
     description: '',
     lastModified: new Date(),
     comments: [],
     blocked: false,
     history: [],
-    assignee: '',
+    assigneeId: 0,
     status: '',
-    creator: this.user.name
+    creatorName: this.user.name,
+    creatorId: this.user.id,
+    id: 0,
+    dateCreation: new Date(),
+    sectionId: 0,
+    active: false,
+    assignee: this.emptyUser
   };
-
-  constructor(public dialog: MatDialog) {}
 
   openNewStatusDialog(): void {
     const dialogRef = this.dialog.open(TasksSectionNewStatusComponentDialog, {
@@ -107,7 +175,6 @@ export class TasksSectionComponent {
     dialogRef.afterClosed().subscribe(result => {
       if (result != false && result != '' && result != undefined)
       {
-        console.log(result);
         this.newStatusName = result;
         this.addTab(this.newStatusName, 1);
       }
@@ -117,9 +184,9 @@ export class TasksSectionComponent {
 
   openNewTaskDialog(section: Section): void {
     this.newTask.status = section.name;
-    this.newTask.creator = this.user.name;
+    this.newTask.creatorName = this.user.name;
     this.newTask.description = '';
-    this.newTask.history.push('Created by ' + this.newTask.creator + ' at ' + new Date());
+    this.newTask.history.push('Created by ' + this.newTask.creatorName + ' at ' + new Date());
     this.newTask.blocked = false;
 
     const dialogRef = this.dialog.open(TasksSectionNewTaskComponentDialog, {
@@ -127,9 +194,9 @@ export class TasksSectionComponent {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result != false && this.newTask.title != '')
+      if (result != false && this.newTask.name != '')
         this.addTask(section, result);
-      this.newTask.title = '';
+      this.newTask.name = '';
       this.newTask.history.pop();
     });
   }
@@ -140,91 +207,46 @@ export class TasksSectionComponent {
     });
   }
 
-  /* newMockTask1: Task = {
-    title: 'Mock task1',
-    position: 1,
-    description: `Lorem ipsum dolor sit amet. Est provident voluptatem cum atque quisquam est iste consequatur in voluptas recusandae. Aut tempore adipisci est quidem recusandae et eveniet quia.                 
-                  Et rerum rerum qui quos quaerat et aspernatur libero id galisum facere et facere iure. Non mollitia repellat eum esse corrupti et voluptas tempora sit neque iusto et porro obcaecati eum molestias delectus et atque excepturi. 
-                  Ab velit laudantium sed rerum iste ut omnis sunt a temporibus galisum sed asperiores sunt est error ipsa non odio dignissimos. Sed dolor sunt ea nobis doloremque ut similique doloribus aut blanditiis perferendis sit vero laborum ut enim possimus. Sed dicta error qui error maxime qui atque voluptatem aut nisi temporibus qui quas expedita quo quidem vitae aut galisum dolorum.`,
-    lastModified: new Date(),
-    comments: ['Lorem ipsum dolor sit amet. Est provident voluptatem cum atque quisquam est iste consequatur in voluptas recusandae. Aut tempore adipisci est quidem recusandae et eveniet quia.',
-                'Et rerum rerum qui quos quaerat et aspernatur libero id galisum facere et facere iure. Non mollitia repellat eum esse corrupti et voluptas tempora sit neque iusto et porro obcaecati eum molestias delectus et atque excepturi.',
-                'Ab velit laudantium sed rerum iste ut omnis sunt a temporibus galisum sed asperiores sunt est error ipsa non odio dignissimos. Sed dolor sunt ea nobis doloremque ut similique doloribus aut blanditiis perferendis sit vero laborum ut enim possimus. Sed dicta error qui error maxime qui atque voluptatem aut nisi temporibus qui quas expedita quo quidem vitae aut galisum dolorum.'
-              ],
-    blocked: false,
-    history: ['Lorem ipsum dolor sit amet.', 'Lorem ipsum dolor sit amet.', 'Lorem ipsum dolor sit amet.'],
-    assignee: 'Patrick',
-    status: 'Mock Status',
-    creator: this.user.name
-  };
-
-  newMockTask2: Task = {
-    title: 'Mock task2',
-    position: 2,
-    description: '',
-    lastModified: new Date(),
-    comments: [],
-    blocked: false,
-    history: [],
-    assignee: '',
-    status: 'Mock Status',
-    creator: this.user.name
-  };
-
-  newMockTask3: Task = {
-    title: 'Mock task2',
-    position: 3,
-    description: '',
-    lastModified: new Date(),
-    comments: [],
-    blocked: false,
-    history: [],
-    assignee: '',
-    status: 'Mock Status',
-    creator: this.user.name
-  };
-
-  mockTaskList: Array<Task> = [this.newMockTask1, this.newMockTask2, this.newMockTask3];
-
-  mockSection: Section = {
-    position: 1,
-    name: 'Mock Status',
-    tasks: this.mockTaskList 
-  } */
-
   addTab(name: string, position: number) {
     let newSection: Section = {
       name: name,
       position: position,
+      active: true,
+      id: 1,
+      boardId: 1,
       tasks: new Array<Task>
     };
 
-    this.sections.push(newSection);
+    //this.sections.push(newSection);
   }
 
   removeTab(index: number) {
-    this.sections.splice(index, 1);
+    //this.sections.splice(index, 1);
   }
 
   addTask(section: Section, task: Task) {
     let newTask: Task = {
-      title: task.title,
+      name: task.name,
       position: 1,
       description: task.description,
       lastModified: task.lastModified,
       comments: task.comments,
       blocked: task.blocked,
       history: task.history,
-      assignee: task.assignee,
+      assigneeId: task.assigneeId,
       status: task.status,
-      creator: task.creator
+      creatorId: task.creatorId,
+      id: task.id,
+      dateCreation: task.dateCreation,
+      sectionId: task.sectionId,
+      active: task.active,
+      creatorName: task.creatorName,
+      assignee: task.assignee
     };
 
     if (section.tasks.length != 0) {
       newTask.position = section.tasks[section.tasks.length-1].position + 1;
     }
-
-    console.log(section);
 
     section.tasks.push(newTask);
   }

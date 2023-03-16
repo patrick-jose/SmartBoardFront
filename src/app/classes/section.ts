@@ -3,5 +3,8 @@ import { Task } from "./task";
 export interface Section {
     position: number;
     name: String;
-    tasks: Task[];
+    id: number;
+    active: boolean;
+    boardId: number;
+    tasks: Array<Task>
 }

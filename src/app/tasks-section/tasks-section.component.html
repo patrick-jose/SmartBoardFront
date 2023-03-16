@@ -4,7 +4,7 @@
     </mat-card-header>
     <mat-card-content>
         <button *ngFor="let task of section.tasks; let i = index" mat-raised-button class="task" (click)="openTaskDetails(task)">
-            {{task.title}}
+            {{task.name}}
         </button>
         <button  mat-mini-fab matTooltip="Primary" color="primary"  class="add-task-button" (click)="openNewTaskDialog(section)">
             <mat-icon>add_circle</mat-icon>

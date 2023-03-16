@@ -1,8 +1,8 @@
 <div style="width: 1000px; display:table-cell">
-    <h2 mat-dialog-title *ngIf="!editEnabled">{{data.task.title}}</h2>
+    <h2 mat-dialog-title *ngIf="!editEnabled">{{data.task.name}}</h2>
     <mat-form-field mat-dialog-title appearance="fill" style="width: 100%; margin-top: 20px;" *ngIf="editEnabled">
         <mat-label>Task name:</mat-label>
-        <input matInput [(ngModel)]="data.task.title">
+        <input matInput [(ngModel)]="data.task.name">
     </mat-form-field>
     <div mat-dialog-content style="width: 100%;">
         <mat-card-content style="float: right; width: 40%;" class="card-section">
@@ -12,7 +12,7 @@
                     <mat-form-field appearance="fill" style="width: 100%;">
                         <mat-label>Status</mat-label>
                         <mat-select>
-                        <mat-option value="option" *ngFor="let section of data.sections">{{section.name}}</mat-option>
+                        <mat-option value="option" *ngFor="let section of data.sections" [(ngModel)]="data.task.sectionId">{{section.name}}</mat-option>
                         </mat-select>
                         <mat-hint align="end">Status ^</mat-hint>
                     </mat-form-field>
@@ -20,10 +20,7 @@
                     <mat-form-field appearance="fill" style="width: 100%;">
                         <mat-label>Assignee</mat-label>
                         <mat-select>
-                        <mat-option value="option">User 1</mat-option>
-                        <mat-option value="option">User 2</mat-option>
-                        <mat-option value="option">User 3</mat-option>
-                        <mat-option value="option">User 4</mat-option>
+                        <mat-option value="option" *ngFor="let user of data.users" [(ngModel)]="data.task.assigneeId">{{user.name}}</mat-option>
                         </mat-select>
                         <mat-hint align="end">Users ^</mat-hint>
                     </mat-form-field>
@@ -31,7 +28,7 @@
             </div>
 
             <mat-card-content class="dialog-task" *ngIf="!editEnabled">
-                <b style="display: contents;">Assigned to: </b>{{data.task.assignee}}
+                <b style="display: contents;">Assigned to: </b>{{data.task.assigneeId}}
             </mat-card-content>
             <mat-card-content class="dialog-task" *ngIf="!editEnabled">
                 <b style="display: contents;">Status: </b>{{data.task.status}}
@@ -69,16 +66,13 @@
             </button>
             <mat-card-content style="padding: 30px 10px 10px 10px;">
                 <p *ngFor="let comment of data.task.comments" class="comments-section">
-                {{comment}}
+                {{comment.content}}
                 </p>
             </mat-card-content>
         </mat-card-content>
         <button mat-mini-fab matTooltip="Edit" color="primary" class="edit-button" (click)="editTask()">
             <mat-icon>edit</mat-icon>
         </button>
-
-
-
         
         <div style=" width: 48%; float: left;" *ngIf="false">       
             <mat-form-field appearance="fill" style="width: 100%;">

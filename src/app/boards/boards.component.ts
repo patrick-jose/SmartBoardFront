@@ -1,25 +1,38 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { User } from '../user';
+import { User } from '../classes/user';
+import { Board } from '../classes/board';
+import { MyDataService } from '../services/my-data.service';
 
 @Component({
   selector: 'app-boards',
   templateUrl: './boards.component.html',
   styleUrls: ['./boards.component.css']
 })
-export class BoardsComponent {
-  tabs = ['Board 1'];
+export class BoardsComponent implements OnInit {
+  tabs : any;
+
+  constructor(private myDataService: MyDataService) {
+    tabs : Array<Board>;
+  }
+
+  ngOnInit(): void {
+    this.myDataService.getBoards().subscribe((data) => {
+      this.tabs = data;
+    });
+  }
+
   selected = new FormControl(0);
   editClicked = false;
   
   @Input() user: User = {
     name: '',
     password: '',
-    login: false
+    login: false,
+    id: 0
   };
 
   addTab() {
-    console.log(this.user);
     this.tabs.push('Board ' + (this.tabs.length + 1));
     this.selected.setValue(this.tabs.length - 1);
   }
