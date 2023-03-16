@@ -1,6 +1,7 @@
 import { Component, Output, EventEmitter } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { User } from '../classes/user';
+import { MyDataService } from '../services/my-data.service';
 
 @Component({
   selector: 'app-login',
@@ -15,10 +16,12 @@ export class LoginComponent {
     id: 0
   };
 
+  constructor(private myDataService: MyDataService) {}
+
   @Output() loginSucessEvent = new EventEmitter<boolean>();
 
   username = new FormControl('', [Validators.required]);
-  hide = true;
+  hide = this.user.login;
 
   getErrorMessage() {
     if (this.username.hasError('required')) {
@@ -30,7 +33,7 @@ export class LoginComponent {
 
   changeLoginStatus(user: User) {
     if (user.name != '' && user.password != '')
-      user.login = true;
+      this.myDataService.checkCredentials(user.name, user.password).subscribe(result => { user.login = result });
     this.loginSucessEvent.emit(user.login);
   }
 }

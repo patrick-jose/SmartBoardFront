@@ -38,6 +38,9 @@ export class MyDataService {
   getUserById(userId: number) {
     return this.http.get<User>('https://localhost:7068/api/User?id=' + userId);
   }
+  checkCredentials(userName: String, password: String){
+    return this.http.get<boolean>('https://localhost:7068/api/User/CheckCredentials?userName=' + userName + '&password=' + password);
+  }
   getStatusHistoryByTaskId(taskId: number) {
     return this.http.get<Array<StatusHistory>>('https://localhost:7068/api/StatusHistory/GetStatusHistoryByTaskId?taskId=' + taskId);
   }

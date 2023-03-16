@@ -7,9 +7,9 @@
     <div mat-dialog-content style="width: 100%;">
         <mat-card-content style="float: right; width: 40%;" class="card-section">
 
-            <div *ngIf="editEnabled">
+            <div>
                 <p>
-                    <mat-form-field appearance="fill" style="width: 100%;">
+                    <mat-form-field appearance="fill" style="width: 100%;" *ngIf="editEnabled">
                         <mat-label>Status</mat-label>
                         <mat-select>
                         <mat-option value="option" *ngFor="let section of data.sections" [(ngModel)]="data.task.sectionId">{{section.name}}</mat-option>
@@ -17,7 +17,7 @@
                         <mat-hint align="end">Status ^</mat-hint>
                     </mat-form-field>
                     <br>
-                    <mat-form-field appearance="fill" style="width: 100%;">
+                    <mat-form-field appearance="fill" style="width: 100%;" *ngIf="editEnabled">
                         <mat-label>Assignee</mat-label>
                         <mat-select>
                         <mat-option value="option" *ngFor="let user of data.users" [(ngModel)]="data.task.assigneeId">{{user.name}}</mat-option>
@@ -40,6 +40,7 @@
             </mat-card-header>
             <mat-card-content class="dialog-task" style="font-size: 15px;">
                 <span>Created At: {{data.task.dateCreation | date:'dd/MM/yyyy HH:mm:ss'}}</span>
+                <br>
                 <p *ngFor="let history of data.task.history">
                     Date Modified: {{history.dateModified | date:'dd/MM/yyyy HH:mm:ss'}}
                     <br>
@@ -55,16 +56,17 @@
         </mat-card-content>
 
         <mat-card-content style="float: left; width: 60%;" class="card-section">
-            <mat-form-field appearance="fill" style="width: 95%; margin: auto;" *ngIf="editEnabled">
-                <mat-label matInput>Description:</mat-label>
+            <mat-form-field mat-dialog-title appearance="fill" style="width: 100%; margin-top: 20px;" *ngIf="editEnabled">
+                <mat-label>Description:</mat-label>
                 <textarea matInput [(ngModel)]="data.task.description"></textarea>
-            </mat-form-field> 
+            </mat-form-field>
             <h3 mat-dialog-subtitle style="margin: 0px 0px 0px 25px;" *ngIf="!editEnabled">{{data.task.description}}</h3>
+            
             <mat-card-header style="padding: 40px 0px 20px 0px;">
-                <mat-card-title>Comments</mat-card-title>
+                <mat-card-title>Comments:</mat-card-title>
             </mat-card-header>
             <mat-form-field appearance="fill" style="width: 95%; margin: auto;">
-                <textarea matInput></textarea>
+                <textarea matInput></textarea>           
             </mat-form-field>
             <button mat-mini-fab matTooltip="Send" color="primary" style="right: -91%;">
                 <mat-icon>send</mat-icon>   
@@ -74,6 +76,7 @@
                 {{comment.content}}
                 </p>
             </mat-card-content>
+
         </mat-card-content>
         <button mat-mini-fab matTooltip="Edit" color="primary" class="edit-button" (click)="editTask()">
             <mat-icon>edit</mat-icon>

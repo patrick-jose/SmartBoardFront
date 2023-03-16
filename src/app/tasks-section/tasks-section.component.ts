@@ -1,10 +1,11 @@
-import { Component, Inject, Input, OnInit } from '@angular/core';
+import { Component, forwardRef, Inject, Input, OnInit } from '@angular/core';
 import { Section } from '../classes/section';
 import { Task } from '../classes/task';
 import { User } from '../classes/user';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MyDataService } from '../services/my-data.service';
 import { StatusHistory } from "../classes/statusHistory";
+import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
 export interface DialogData {
   newStatus: Section;
@@ -53,13 +54,18 @@ export class TasksSectionNewTaskComponentDialog {
 @Component({
   selector: 'tasks-section-task-details.component.dialog',
   templateUrl: 'tasks-section-task-details.component.dialog.html',
-  styleUrls: ['./tasks-section.component.css']
+  styleUrls: ['./tasks-section.component.css'],
+  providers: [{
+    provide: NG_VALUE_ACCESSOR,
+    useExisting: forwardRef(() => TasksSectionTaskDetailsComponentDialog),
+    multi: true,
+  }]
 })
 export class TasksSectionTaskDetailsComponentDialog {
   constructor(
     public dialogRef: MatDialogRef<TasksSectionTaskDetailsComponentDialog>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
-    private myDataService: MyDataService 
+    private myDataService: MyDataService,
     ) {}
 
   onNoClick(): void {
