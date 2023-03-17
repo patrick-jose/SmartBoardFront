@@ -71,7 +71,7 @@ export class TasksSectionNewTaskComponentDialog {
       this.data.users = data;
     });
 
-    console.log(this.data.newTaskDTO);
+    //console.log(this.data.newTaskDTO);
   }
 }
 
@@ -127,7 +127,7 @@ export class TasksSectionComponent implements OnInit {
       this.loadTasks(this.sections);
     });
 
-    console.log(this.user);
+    //console.log(this.user);
   }
 
   loadTasks(sections : Array<Section>) {
@@ -180,17 +180,18 @@ export class TasksSectionComponent implements OnInit {
     });
   };
 
-  @Input() user: User = {
-    name: '',
-    password: '',
-    login: false,
-    id: 0
-  };
   @Input() editClicked = false;
   @Input() boardId = 1;
   newStatusName = '';
   
   emptyUser: User = {
+    name: '',
+    password: '',
+    login: false,
+    id: 0
+  };
+
+  @Input() user: User = {
     name: '',
     password: '',
     login: false,
@@ -220,6 +221,8 @@ export class TasksSectionComponent implements OnInit {
     const dialogRef = this.dialog.open(TasksSectionNewStatusComponentDialog, {
       data: { newStatusName: this.newStatusName },
     });
+
+    //console.log(this.user);
     
     dialogRef.afterClosed().subscribe(result => {
       if (result != false && result != '' && result != undefined)
@@ -243,7 +246,7 @@ export class TasksSectionComponent implements OnInit {
       actualSectionName: section.name
     };
 
-    console.log(this.user);
+    //console.log(this.user);
 
     this.newTask.section = section.name;
     this.newTask.creatorName = this.user.name;
@@ -329,6 +332,9 @@ export class TasksSectionComponent implements OnInit {
       assignee: task.assignee
     };
 
+    let password = this.user.password;
+    let userName = this.user.name;
+
     if (section.tasks.length != 0) {
       newTask.position = section.tasks[section.tasks.length-1].position + 1;
     }
@@ -339,19 +345,22 @@ export class TasksSectionComponent implements OnInit {
       name: newTask.name,
       description: newTask.description,
       dateCreation: newTask.dateCreation,
-      sectionId: newTask.sectionId,
+      sectionId: section.id,
       active: newTask.active,
       blocked: newTask.blocked,
       position: newTask.position,
       assigneeId: newTask.assigneeId
     };
 
-    console.log(newTaskDTO);
-
     section.tasks.push(newTask);
 
+    function getUserId(service: MyDataService) {
+      service.getUserId(userName, password).subscribe(result => { 
+        newTaskDTO.creatorId = result.id;
+      }); 
+    }
     function postNewTask(service: MyDataService) {
-      service.postTask(newTaskDTO).subscribe();
+        service.postTask(newTaskDTO).subscribe();
     }
     function updateTasks(service: MyDataService, tasks: Array<Task>, sectionId : number) {
       service.getAllTasksBySectionId(sectionId).subscribe((data) => {
@@ -359,10 +368,13 @@ export class TasksSectionComponent implements OnInit {
       });
     }
 
-    setTimeout((tasks : Array<Task> = section.tasks, myDataService : MyDataService = this.myDataService) => {
-      updateTasks(myDataService, tasks, tasks[0].sectionId);
+    setTimeout(() => {
+      postNewTask(this.myDataService);      
+    }, 5500);
+    setTimeout(() => { 
+      updateTasks(this.myDataService, section.tasks, section.id); 
     }, 500);
-    postNewTask(this.myDataService);
+    getUserId(this.myDataService);
   }
 
   openTaskDetails(task: Task) {

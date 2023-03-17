@@ -47,6 +47,9 @@ export class MyDataService {
   getUserById(userId: number) {
     return this.http.get<User>('https://localhost:7068/api/User?id=' + userId);
   }
+  getUserId(name: String, password: String) {
+    return this.http.get<User>('https://localhost:7068/api/User/GetDetails?userName=' + name + '&password=' + password);
+  }
   checkCredentials(userName: String, password: String){
     return this.http.get<boolean>('https://localhost:7068/api/User/CheckCredentials?userName=' + userName + '&password=' + password);
   }
