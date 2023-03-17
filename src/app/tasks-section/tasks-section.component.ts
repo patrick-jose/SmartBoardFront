@@ -10,6 +10,7 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
 export interface DialogData {
   newStatus: Section;
   newTask: Task;
+  newTaskDTO: TaskDTO;
   task: Task;
   sections: Section[];
   users: Array<User>;
@@ -41,7 +42,8 @@ export class TasksSectionNewStatusComponentDialog {
 export class TasksSectionNewTaskComponentDialog {
   constructor(
     public dialogRef: MatDialogRef<TasksSectionNewTaskComponentDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData, 
+    @Inject(MAT_DIALOG_DATA) public data: DialogData,
+    private myDataService: MyDataService 
     ) {}
 
   onNoClick(): void {
@@ -50,6 +52,26 @@ export class TasksSectionNewTaskComponentDialog {
 
   setBlocked(){
     this.data.newTask.blocked = !this.data.newTask.blocked
+  }
+
+  ngOnInit(): void {
+    this.data.newTaskDTO = {
+      id: 0,
+      creatorId: this.data.newTask.creatorId,
+      name: '',
+      description: '',
+      dateCreation: new Date(),
+      sectionId: 0,
+      active: false,
+      blocked: false,
+      position: 0
+    }
+
+    this.myDataService.getAllUsers().subscribe((data) => {
+      this.data.users = data;
+    });
+
+    console.log(this.data.newTaskDTO);
   }
 }
 
@@ -104,6 +126,8 @@ export class TasksSectionComponent implements OnInit {
       this.sections = data;
       this.loadTasks(this.sections);
     });
+
+    console.log(this.user);
   }
 
   loadTasks(sections : Array<Section>) {
@@ -219,8 +243,11 @@ export class TasksSectionComponent implements OnInit {
       actualSectionName: section.name
     };
 
+    console.log(this.user);
+
     this.newTask.section = section.name;
     this.newTask.creatorName = this.user.name;
+    this.newTask.creatorId = this.user.id;
     this.newTask.description = '';
     this.newTask.history.push(statushistory);
     this.newTask.blocked = false;
@@ -282,7 +309,7 @@ export class TasksSectionComponent implements OnInit {
     this.sections.splice(index, 1);
   }
 
-  addTask(section: Section, task : Task, newAssigneeId? : number) {
+  addTask(section: Section, task : Task) {
     let newTask: Task = {
       name: task.name,
       position: 1,
@@ -293,7 +320,7 @@ export class TasksSectionComponent implements OnInit {
       history: task.history,
       assigneeId: task.assigneeId,
       section: task.section,
-      creatorId: task.creatorId,
+      creatorId: this.user.id,
       id: task.id,
       dateCreation: task.dateCreation,
       sectionId: task.sectionId,
@@ -316,8 +343,10 @@ export class TasksSectionComponent implements OnInit {
       active: newTask.active,
       blocked: newTask.blocked,
       position: newTask.position,
-      assigneeId: newAssigneeId
+      assigneeId: newTask.assigneeId
     };
+
+    console.log(newTaskDTO);
 
     section.tasks.push(newTask);
 

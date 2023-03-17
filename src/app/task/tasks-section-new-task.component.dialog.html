@@ -10,11 +10,8 @@
             <br>
             <mat-form-field appearance="fill" style="width: 70%;">
                 <mat-label>Assignee</mat-label>
-                <mat-select>
-                <mat-option value="option">User 1</mat-option>
-                <mat-option value="option">User 2</mat-option>
-                <mat-option value="option">User 3</mat-option>
-                <mat-option value="option">User 4</mat-option>
+                <mat-select [(ngModel)]="data.newTask.assigneeId">
+                    <mat-option *ngFor="let user of data.users" [value]="user.id">{{user.name}}</mat-option>
                 </mat-select>
                 <mat-hint align="end">Users ^</mat-hint>
             </mat-form-field>
