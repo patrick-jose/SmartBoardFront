@@ -27,7 +27,7 @@
                 </p>
             </div>
 
-            <mat-card-content class="dialog-task" *ngIf="!editEnabled && data.task.assignee.name != undefined">
+            <mat-card-content class="dialog-task" *ngIf="!editEnabled">
                 <b style="display: contents;">Assigned to: </b>{{data.task.assignee.name}}
             </mat-card-content>
             <mat-card-content class="dialog-task" *ngIf="!editEnabled">

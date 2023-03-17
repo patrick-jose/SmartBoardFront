@@ -1,5 +1,5 @@
 import { Component, forwardRef, Inject, Input, OnInit } from '@angular/core';
-import { Section } from '../classes/section';
+import { Section, SectionDTO } from '../classes/section';
 import { Task } from '../classes/task';
 import { User } from '../classes/user';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -17,7 +17,7 @@ export interface DialogData {
 
 @Component({
   selector: 'tasks-section-new-status.component.dialog',
-  templateUrl: 'tasks-section-new-status.component.dialog.html',
+  templateUrl: '../task/tasks-section-new-status.component.dialog.html',
   styleUrls: ['./tasks-section.component.css']
 })
 export class TasksSectionNewStatusComponentDialog {
@@ -26,6 +26,8 @@ export class TasksSectionNewStatusComponentDialog {
     @Inject(MAT_DIALOG_DATA) public data: DialogData, 
     ) {}
 
+  newStatusName = '';
+
   onNoClick(): void {
     this.dialogRef.close(false);
   }
@@ -33,7 +35,7 @@ export class TasksSectionNewStatusComponentDialog {
 
 @Component({
   selector: 'tasks-section-new-task.component.dialog',
-  templateUrl: 'tasks-section-new-task.component.dialog.html',
+  templateUrl: '../task/tasks-section-new-task.component.dialog.html',
   styleUrls: ['./tasks-section.component.css']
 })
 export class TasksSectionNewTaskComponentDialog {
@@ -53,7 +55,7 @@ export class TasksSectionNewTaskComponentDialog {
 
 @Component({
   selector: 'tasks-section-task-details.component.dialog',
-  templateUrl: 'tasks-section-task-details.component.dialog.html',
+  templateUrl: '../task/tasks-section-task-details.component.dialog.html',
   styleUrls: ['./tasks-section.component.css'],
   providers: [{
     provide: NG_VALUE_ACCESSOR,
@@ -199,7 +201,8 @@ export class TasksSectionComponent implements OnInit {
       if (result != false && result != '' && result != undefined)
       {
         this.newStatusName = result;
-        this.addTab(this.newStatusName, 1);
+
+        this.addStatus(this.newStatusName);
       }
       this.newStatusName = '';
     });
@@ -240,17 +243,39 @@ export class TasksSectionComponent implements OnInit {
     });
   }
 
-  addTab(name: string, position: number) {
+  addStatus(name: string) {
     let newSection: Section = {
       name: name,
-      position: position,
+      position: (this.sections.length + 1),
       active: true,
       id: 1,
-      boardId: 1,
+      boardId: this.boardId,
       tasks: new Array<Task>
     };
 
     this.sections.push(newSection);
+
+    let newSectionDTO: SectionDTO = {
+      name: name,
+      position: this.sections.length,
+      active: true,
+      id: 1,
+      boardId: this.boardId,
+    };
+
+    function postNewSection(service: MyDataService) {
+      service.postSection(newSectionDTO).subscribe();
+    }
+    function updateSections(service: MyDataService, sections: Array<Section>, boardId : number) {
+      service.getAllSectionsByBoardId(boardId).subscribe((data) => {
+        sections = data;
+      });
+    }
+
+    setTimeout((sections : Array<Section> = this.sections, myDataService : MyDataService = this.myDataService) => {
+      updateSections(myDataService, sections, sections[0].boardId);
+    }, 500);
+    postNewSection(this.myDataService);
   }
 
   removeTab(index: number) {

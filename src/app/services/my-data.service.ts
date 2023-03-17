@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Section } from '../classes/section';
+import { Section, SectionDTO } from '../classes/section';
 import { Board } from '../classes/board';
 import { Task } from '../classes/task';
 import { CommentDTO } from '../classes/commentDTO';
@@ -17,8 +17,14 @@ export class MyDataService {
   getBoards() {
     return this.http.get<Array<Board>>('https://localhost:7068/api/Board/GetAllActiveBoards');
   }
+  postBoard(board: Board) {
+    return this.http.post('https://localhost:7068/api/Board', board);
+  }
   getAllSections() {
     return this.http.get<Array<Section>>('https://localhost:7068/api/Section/GetAllSections');
+  }
+  postSection(section: SectionDTO) {
+    return this.http.post('https://localhost:7068/api/Section', section);
   }
   getSectionById(sectionId : number) {
     return this.http.get<Section>('https://localhost:7068/api/Section/GetSectionById?id=' + sectionId);
