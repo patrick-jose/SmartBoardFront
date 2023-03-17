@@ -124,6 +124,7 @@ export class TasksSectionComponent implements OnInit {
   ngOnInit(): void {
     this.myDataService.getAllSectionsByBoardId(this.boardId).subscribe((data) => {
       this.sections = data;
+      console.log(this.sections);
       this.loadTasks(this.sections);
     });
 
@@ -159,7 +160,7 @@ export class TasksSectionComponent implements OnInit {
   };
 
   loadAssignee(task : Task) {
-    if (task.assigneeId != undefined && task.assigneeId > 0)
+    if (task.assigneeId != undefined && task.assigneeId != 0)
       this.myDataService.getUserById(task.assigneeId).subscribe((data) => {
         task.assignee = data;
       })
@@ -332,6 +333,9 @@ export class TasksSectionComponent implements OnInit {
       assignee: task.assignee
     };
 
+    console.log(task.section);
+    console.log(section);
+
     let password = this.user.password;
     let userName = this.user.name;
 
@@ -346,7 +350,7 @@ export class TasksSectionComponent implements OnInit {
       description: newTask.description,
       dateCreation: newTask.dateCreation,
       sectionId: section.id,
-      active: newTask.active,
+      active: true,
       blocked: newTask.blocked,
       position: newTask.position,
       assigneeId: newTask.assigneeId
@@ -357,20 +361,23 @@ export class TasksSectionComponent implements OnInit {
     function getUserId(service: MyDataService) {
       service.getUserId(userName, password).subscribe(result => { 
         newTaskDTO.creatorId = result.id;
+        console.log(1);
       }); 
     }
     function postNewTask(service: MyDataService) {
         service.postTask(newTaskDTO).subscribe();
+        console.log(2);
     }
     function updateTasks(service: MyDataService, tasks: Array<Task>, sectionId : number) {
       service.getAllTasksBySectionId(sectionId).subscribe((data) => {
         tasks = data;
       });
+      console.log(3);
     }
 
     setTimeout(() => {
       postNewTask(this.myDataService);      
-    }, 5500);
+    }, 500);
     setTimeout(() => { 
       updateTasks(this.myDataService, section.tasks, section.id); 
     }, 500);

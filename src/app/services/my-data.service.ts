@@ -33,7 +33,7 @@ export class MyDataService {
     return this.http.get<Section>('https://localhost:7068/api/Section/GetSectionById?id=' + sectionId);
   }
   getAllSectionsByBoardId(boardId: number) {
-    return this.http.get<Array<Section>>('https://localhost:7068/api/Section/GetAllSectionsByBoardId?boardId=' + boardId);
+    return this.http.get<Array<Section>>('https://localhost:7068/api/Section/GetAllActiveSectionsByBoardId?boardId=' + boardId);
   }
   getAllTasksBySectionId(sectionId: number) {
     return this.http.get<Array<Task>>('https://localhost:7068/api/Task/GetAllTasksBySectionId?sectionId=' + sectionId);
