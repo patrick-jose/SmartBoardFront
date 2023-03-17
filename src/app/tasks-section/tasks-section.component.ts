@@ -1,6 +1,6 @@
 import { Component, forwardRef, Inject, Input, OnInit } from '@angular/core';
 import { Section, SectionDTO } from '../classes/section';
-import { Task } from '../classes/task';
+import { Task, TaskDTO } from '../classes/task';
 import { User } from '../classes/user';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MyDataService } from '../services/my-data.service';
@@ -282,7 +282,7 @@ export class TasksSectionComponent implements OnInit {
     this.sections.splice(index, 1);
   }
 
-  addTask(section: Section, task: Task) {
+  addTask(section: Section, task : Task, newAssigneeId? : number) {
     let newTask: Task = {
       name: task.name,
       position: 1,
@@ -306,7 +306,34 @@ export class TasksSectionComponent implements OnInit {
       newTask.position = section.tasks[section.tasks.length-1].position + 1;
     }
 
+    let newTaskDTO: TaskDTO = {
+      id: 0,
+      creatorId: newTask.creatorId,
+      name: newTask.name,
+      description: newTask.description,
+      dateCreation: newTask.dateCreation,
+      sectionId: newTask.sectionId,
+      active: newTask.active,
+      blocked: newTask.blocked,
+      position: newTask.position,
+      assigneeId: newAssigneeId
+    };
+
     section.tasks.push(newTask);
+
+    function postNewTask(service: MyDataService) {
+      service.postTask(newTaskDTO).subscribe();
+    }
+    function updateTasks(service: MyDataService, tasks: Array<Task>, sectionId : number) {
+      service.getAllTasksBySectionId(sectionId).subscribe((data) => {
+        tasks = data;
+      });
+    }
+
+    setTimeout((tasks : Array<Task> = section.tasks, myDataService : MyDataService = this.myDataService) => {
+      updateTasks(myDataService, tasks, tasks[0].sectionId);
+    }, 500);
+    postNewTask(this.myDataService);
   }
 
   openTaskDetails(task: Task) {
