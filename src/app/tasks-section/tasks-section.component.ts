@@ -2,6 +2,7 @@ import { Component, forwardRef, Inject, Input, OnInit } from '@angular/core';
 import { Section, SectionDTO } from '../classes/section';
 import { Task, TaskDTO } from '../classes/task';
 import { User } from '../classes/user';
+import { CommentDTO } from '../classes/commentDTO';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MyDataService } from '../services/my-data.service';
 import { StatusHistory } from "../classes/statusHistory";
@@ -14,6 +15,7 @@ export interface DialogData {
   task: Task;
   sections: Section[];
   users: Array<User>;
+  newComment: CommentDTO;
 }
 
 @Component({
@@ -103,6 +105,25 @@ export class TasksSectionTaskDetailsComponentDialog {
   }
 
   editEnabled = false;
+
+  sendComment(){
+    console.log(this.data.newComment);
+    if (this.data.newComment.content != '')
+    {
+      console.log(this.data.newComment);
+
+      this.data.newComment.dateCreation = new Date();
+      this.myDataService.postComment(this.data.newComment).subscribe();
+    
+      this.data.newComment = {
+        content: '',
+        writerId: 0,
+        dateCreation: new Date(),
+        taskId: 0,
+        id: 0
+      };
+    }
+  }
 
   editTask(){
     this.editEnabled = !this.editEnabled;
@@ -268,9 +289,17 @@ export class TasksSectionComponent implements OnInit {
     });
   }
 
+  newComment : CommentDTO = {
+    content: '',
+    writerId: 0,
+    id: 0,
+    dateCreation: new Date(),
+    taskId: 0
+  };
+
   openTaskDetailsDialog(task: Task): void {
     const dialogRef = this.dialog.open(TasksSectionTaskDetailsComponentDialog, {
-      data: { task: task, sections: this.sections },
+      data: { task: task, sections: this.sections, newComment: this.newComment },
     });
   }
 

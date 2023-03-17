@@ -65,11 +65,14 @@
             <mat-card-header style="padding: 40px 0px 20px 0px;">
                 <mat-card-title>Comments:</mat-card-title>
             </mat-card-header>
-            <mat-form-field appearance="fill" style="width: 95%; margin: auto;">
-                <textarea matInput></textarea>           
+            <mat-form-field appearance="fill" style="width: 95%; margin: auto;" [ngModel]="data.newComment.content">
+                <textarea matInput ></textarea>           
             </mat-form-field>
-            <button mat-mini-fab matTooltip="Send" color="primary" style="right: -91%;">
-                <mat-icon>send</mat-icon>   
+
+            <div>{{data.newComment.content}}</div>
+
+            <button mat-mini-fab matTooltip="Send" color="primary" style="right: -91%;" (click)="sendComment()">
+                <mat-icon (click)="sendComment()">send</mat-icon>   
             </button>
             <mat-card-content style="padding: 30px 10px 10px 10px;">
                 <p *ngFor="let comment of data.task.comments" class="comments-section">

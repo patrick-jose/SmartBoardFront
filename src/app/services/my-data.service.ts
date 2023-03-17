@@ -26,6 +26,9 @@ export class MyDataService {
   postSection(section: SectionDTO) {
     return this.http.post('https://localhost:7068/api/Section', section);
   }
+  postComment(comment: CommentDTO) {
+    return this.http.post('https://localhost:7068/api/Comment', comment);
+  }
   postTask(task: TaskDTO) {
     return this.http.post('https://localhost:7068/api/Task', task);
   }
