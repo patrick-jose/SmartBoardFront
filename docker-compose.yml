@@ -1,0 +1,76 @@
+# Use postgres/example user/password credentials
+version: '3.1'
+
+services:
+
+  SmartBoardDB:
+    image: postgres:latest
+    restart: unless-stopped
+    environment:
+      - POSTGRES_PASSWORD=postgrespw
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=smartboarddb
+    ports: 
+      - "5432:5432"
+    volumes: 
+      - db:/var/lib/postgresql/data/
+      - ./db/init.sql:/docker-entrypoint-initdb.d/
+    networks:
+      - smartboard-network
+
+  SmartBoardService:
+    image: smartboardservice
+    build:
+      context: .
+      dockerfile: SmartBoardService/Dockerfile
+    depends_on: 
+      - SmartBoardDB
+      - rabbitmq      
+    ports:
+      - "8080:80"
+    networks:
+      - smartboard-network
+
+  SmartBoardWebAPI:
+    image: smartboardwebapi
+    build:
+      context: .
+      dockerfile: SmartBoardWebAPI/Dockerfile
+    ports:
+      - "8000:80"
+      - "8081:443"
+    networks:
+      - smartboard-network
+    environment:
+      - ASPNETCORE_HTTPS_PORT=8001
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+;http://+
+    volumes:
+      - '${HOME}/.microsoft/usersecrets/:/root/.microsoft/usersecrets'
+      - '${HOME}/.aspnet/https:/root/.aspnet/https/'
+
+  SmartBoardFront:
+    container_name: smartboarfront
+    ports:
+        - '4200:80'
+    image: smartboardfront
+    networks:
+        - smartboard-network
+
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: 'rabbitmq'
+    ports:
+        - 5672:5672
+        - 15672:15672
+    volumes:
+        - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+        - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+    networks:
+        - smartboard-network
+
+volumes:
+  db:
+networks: 
+    smartboard-network:

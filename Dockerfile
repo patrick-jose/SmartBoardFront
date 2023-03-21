@@ -1,11 +1,3 @@
-FROM node:10
-
-WORKDIR /usr/src/app/app-ui
-
-COPY package*.json ./
-
-RUN npm install -g @angular/cli @angular-devkit/build-angular && npm install
-
-EXPOSE 4201
-
-CMD ["npm", "start"]
+FROM nginx:1.17.1-alpine
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY /dist/smart-board-front /usr/share/nginx/html
