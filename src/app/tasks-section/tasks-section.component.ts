@@ -2,6 +2,7 @@ import { Component, forwardRef, Inject, Input, OnInit } from '@angular/core';
 import { Section, SectionDTO } from '../classes/section';
 import { Task, TaskDTO } from '../classes/task';
 import { User } from '../classes/user';
+import { UserDTO } from '../classes/user';
 import { CommentDTO } from '../classes/commentDTO';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MyDataService } from '../services/my-data.service';
@@ -14,10 +15,11 @@ export interface DialogData {
   newTaskDTO: TaskDTO;
   task: Task;
   sections: Section[];
-  users: Array<User>;
+  users: Array<UserDTO>;
   newComment: CommentDTO;
   user: User;
   section: Section;
+  loading: boolean;
 }
 
 @Component({
@@ -70,10 +72,6 @@ export class TasksSectionNewTaskComponentDialog {
       blocked: false,
       position: 0
     }
-
-    this.myDataService.getAllUsers().subscribe((data) => {
-      this.data.users = data;
-    });
   }
 }
 
@@ -100,13 +98,11 @@ export class TasksSectionTaskDetailsComponentDialog {
 
   updateTask() {
     this.myDataService.updateTask(this.data.task).subscribe();
+    this.myDataService.getTaskById(this.data.task.id).subscribe(result => { this.data.task = result; })
     this.editEnabled = false;
   }
 
   ngOnInit(): void {
-    this.myDataService.getAllUsers().subscribe((data) => {
-      this.data.users = data;
-    });
     this.data.newComment = {
       content: '',
       writerId: this.data.user.id,
@@ -114,6 +110,22 @@ export class TasksSectionTaskDetailsComponentDialog {
       taskId: 0,
       id: 0
     };
+  }
+
+  deleteTask() {
+    this.data.task.active = false;
+    this.myDataService.updateTask(this.data.task).subscribe({
+      complete: async () => {
+        await this.delay(1000);
+        this.dialogRef.close(false);
+        this.data.loading = false;
+      }
+    });
+  }
+
+  delay(ms: number) {
+    this.data.loading = true;
+    return new Promise( resolve => setTimeout(resolve, ms) );
   }
 
   editEnabled = false;
@@ -146,10 +158,13 @@ export class TasksSectionComponent implements OnInit {
     sections : Array<Section>;
   }
 
+  loading = false;
+
   ngOnInit(): void {
     this.myDataService.getAllSectionsByBoardId(this.boardId).subscribe((data) => {
       this.sections = data;
       this.loadTasks(this.sections);
+      this.loadUsers();
     });
   }
 
@@ -203,6 +218,12 @@ export class TasksSectionComponent implements OnInit {
     });
   };
 
+  users: Array<UserDTO> = [];
+
+  loadUsers() {
+    this.myDataService.getAllUsers().subscribe((data) => this.users = data);
+  }
+
   @Input() editClicked = false;
   @Input() boardId = 1;
   newStatusName = '';
@@ -240,20 +261,43 @@ export class TasksSectionComponent implements OnInit {
     assignee: this.emptyUser
   };
 
+  deleteSection(section: Section) {
+    section.active = false;
+    this.myDataService.updateSection(section).subscribe({ 
+      complete: async () => {
+        await this.delay(1000);
+        this.ngOnInit()
+        this.loading = false;
+      }
+    });
+  }
+
   openNewStatusDialog(): void {
     const dialogRef = this.dialog.open(TasksSectionNewStatusComponentDialog, {
-      data: { newStatusName: this.newStatusName },
+      data: { newStatusName: this.newStatusName, users: this.users, loading: this.loading },
     });
     
-    dialogRef.afterClosed().subscribe(result => {
-      if (result != false && result != '' && result != undefined)
-      {
-        this.newStatusName = result;
+    dialogRef.afterClosed().subscribe({
+      next: (result) => {
+        if (result != false && result != '' && result != undefined)
+        {
+          this.newStatusName = result;
 
-        this.addStatus(this.newStatusName);
+          this.addStatus(this.newStatusName);
+        }
+        this.newStatusName = '';
+      },
+      complete: async () => {
+        await this.delay(1000);
+        this.ngOnInit();
+        this.loading = false;
       }
-      this.newStatusName = '';
     });
+  }
+
+  delay(ms: number) {
+    this.loading = true;
+    return new Promise( resolve => setTimeout(resolve, ms) );
   }
 
   openNewTaskDialog(section: Section): void { 
@@ -275,14 +319,21 @@ export class TasksSectionComponent implements OnInit {
     this.newTask.blocked = false;
 
     const dialogRef = this.dialog.open(TasksSectionNewTaskComponentDialog, {
-      data: { newTask: this.newTask, user: this.user, section: section },
+      data: { newTask: this.newTask, user: this.user, section: section, users: this.users, loading: this.loading },
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result != false && this.newTask.name != '')
-        this.addTask(section, result);
-      this.newTask.name = '';
-      this.newTask.history.pop();
+    dialogRef.afterClosed().subscribe({
+      next: (result) => {
+        if (result != false && this.newTask.name != '')
+          this.addTask(section, result);
+        this.newTask.name = '';
+        this.newTask.history.pop();
+      },
+      complete: async () => {
+        await this.delay(1000);
+        this.ngOnInit();
+        this.loading = false;
+      }
     });
   }
 
@@ -296,11 +347,15 @@ export class TasksSectionComponent implements OnInit {
 
   openTaskDetailsDialog(task: Task): void {
     const dialogRef = this.dialog.open(TasksSectionTaskDetailsComponentDialog, {
-      data: { task: task, sections: this.sections, newComment: this.newComment, user: this.user },
+      data: { task: task, sections: this.sections, newComment: this.newComment, user: this.user, users: this.users, loading: this.loading },
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      this.ngOnInit();
+    dialogRef.afterClosed().subscribe({
+      complete: async () => {
+        await this.delay(1000);
+        this.ngOnInit();
+        this.loading = false;
+      }
     });
   }
 

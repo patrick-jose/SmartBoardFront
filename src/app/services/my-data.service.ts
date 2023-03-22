@@ -4,7 +4,7 @@ import { Section, SectionDTO } from '../classes/section';
 import { Board } from '../classes/board';
 import { Task, TaskDTO } from '../classes/task';
 import { CommentDTO } from '../classes/commentDTO';
-import { User } from '../classes/user';
+import { User, UserDTO } from '../classes/user';
 import { StatusHistory } from '../classes/statusHistory';
 
 @Injectable({
@@ -21,10 +21,13 @@ export class MyDataService {
     return this.http.post('https://localhost:8081/api/Board', board);
   }
   getAllSections() {
-    return this.http.get<Array<Section>>('https://localhost:8081/api/Section/GetAllSections');
+    return this.http.get<Array<Section>>('https://localhost:8081/api/Section/GetAllActiveSections');
   }
   postSection(section: SectionDTO) {
     return this.http.post('https://localhost:8081/api/Section', section);
+  }
+  updateSection(section: SectionDTO) {
+    return this.http.put('https://localhost:8081/api/Section', section);
   }
   postComment(comment: CommentDTO) {
     return this.http.post('https://localhost:8081/api/Comment', comment);
@@ -35,6 +38,9 @@ export class MyDataService {
   updateTask(task: TaskDTO) {
     return this.http.put('https://localhost:8081/api/Task', task);
   }
+  getTaskById(taskId: number) {
+    return this.http.get<Task>('https://localhost:8081/api/Task/GetTaskById?id=' + taskId);
+  }
   getSectionById(sectionId : number) {
     return this.http.get<Section>('https://localhost:8081/api/Section/GetSectionById?id=' + sectionId);
   }
@@ -42,13 +48,13 @@ export class MyDataService {
     return this.http.get<Array<Section>>('https://localhost:8081/api/Section/GetAllActiveSectionsByBoardId?boardId=' + boardId);
   }
   getAllTasksBySectionId(sectionId: number) {
-    return this.http.get<Array<Task>>('https://localhost:8081/api/Task/GetAllTasksBySectionId?sectionId=' + sectionId);
+    return this.http.get<Array<Task>>('https://localhost:8081/api/Task/GetAllActiveTasksBySectionId?sectionId=' + sectionId);
   }
   getAllCommentsByTaskId(sectionId: number) {
     return this.http.get<Array<CommentDTO>>('https://localhost:8081/api/Comment/GetCommentByTaskId?taskId=' + sectionId);
   }
   getAllUsers() {
-    return this.http.get<Array<User>>('https://localhost:8081/api/User/GetAllUsers');
+    return this.http.get<Array<UserDTO>>('https://localhost:8081/api/User/GetAllUsers');
   }
   getUserById(userId: number) {
     return this.http.get<User>('https://localhost:8081/api/User?id=' + userId);

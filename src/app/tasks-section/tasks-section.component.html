@@ -1,6 +1,6 @@
 <mat-card *ngFor="let section of sections" id="section">
     <mat-card-header id="title">
-        <mat-card-title>{{section.name}}</mat-card-title>    
+        <mat-card-title>{{section.name}}</mat-card-title><mat-icon class="delete-task" *ngIf="editClicked" (click)="deleteSection(section)">close</mat-icon>   
     </mat-card-header>
     <mat-card-content>
         <button *ngFor="let task of section.tasks; let i = index" mat-raised-button class="task" (click)="openTaskDetails(task)" [ngClass]="{'task-blocked': task.blocked}">
@@ -16,3 +16,4 @@
         <mat-icon>add_circle</mat-icon>
     </button>
 </div>
+<mat-spinner class="loading" *ngIf="loading"></mat-spinner>

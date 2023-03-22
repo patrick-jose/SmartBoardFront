@@ -1,4 +1,8 @@
 <div style="width: 1000px; display:table-cell">
+    <button mat-fab extended color="primary" class="button-delete" *ngIf="editEnabled" (click)="deleteTask()">
+        <mat-icon>delete</mat-icon>
+        Delete
+    </button>
     <h2 mat-dialog-title *ngIf="!editEnabled">{{data.task.name}}</h2>
     <mat-form-field mat-dialog-title appearance="fill" style="width: 100%; margin-top: 20px;" *ngIf="editEnabled">
         <mat-label>Task name:</mat-label>
