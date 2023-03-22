@@ -34,12 +34,11 @@ export class LoginComponent {
   changeLoginStatus(user: User) {
     if (user.name != '' && user.password != '')
     {
-      this.myDataService.checkCredentials(user.name, user.password).subscribe(result => { user.login = result; });     
+      this.myDataService.checkCredentials(user.name, user.password).subscribe({
+        next: result => { user.login = result; }, 
+        complete: () => this.myDataService.getUserId(user.name, user.password).subscribe(result => { user.id = result.id; })
+      });
     }
-
-    //apagar!
-    //user.login = true;
-
 
     this.loginSucessEvent.emit(user.login);
   }

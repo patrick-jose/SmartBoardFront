@@ -16,6 +16,8 @@ export interface DialogData {
   sections: Section[];
   users: Array<User>;
   newComment: CommentDTO;
+  user: User;
+  section: Section;
 }
 
 @Component({
@@ -59,11 +61,11 @@ export class TasksSectionNewTaskComponentDialog {
   ngOnInit(): void {
     this.data.newTaskDTO = {
       id: 0,
-      creatorId: this.data.newTask.creatorId,
+      creatorId: this.data.user.id,
       name: '',
       description: '',
       dateCreation: new Date(),
-      sectionId: 0,
+      sectionId: this.data.section.id,
       active: false,
       blocked: false,
       position: 0
@@ -72,8 +74,6 @@ export class TasksSectionNewTaskComponentDialog {
     this.myDataService.getAllUsers().subscribe((data) => {
       this.data.users = data;
     });
-
-    //console.log(this.data.newTaskDTO);
   }
 }
 
@@ -95,33 +95,37 @@ export class TasksSectionTaskDetailsComponentDialog {
     ) {}
 
   onNoClick(): void {
-    this.dialogRef.close(false);
+    this.editEnabled = false;
+  }
+
+  updateTask() {
+    this.myDataService.updateTask(this.data.task).subscribe();
+    this.editEnabled = false;
   }
 
   ngOnInit(): void {
     this.myDataService.getAllUsers().subscribe((data) => {
       this.data.users = data;
     });
+    this.data.newComment = {
+      content: '',
+      writerId: this.data.user.id,
+      dateCreation: new Date(),
+      taskId: 0,
+      id: 0
+    };
   }
 
   editEnabled = false;
 
   sendComment(){
-    console.log(this.data.newComment);
     if (this.data.newComment.content != '')
     {
-      console.log(this.data.newComment);
-
       this.data.newComment.dateCreation = new Date();
+      this.data.newComment.writerId = this.data.user.id;
+      this.data.newComment.taskId = this.data.task.id;
       this.myDataService.postComment(this.data.newComment).subscribe();
-    
-      this.data.newComment = {
-        content: '',
-        writerId: 0,
-        dateCreation: new Date(),
-        taskId: 0,
-        id: 0
-      };
+      this.data.task.comments.unshift(this.data.newComment);
     }
   }
 
@@ -145,11 +149,8 @@ export class TasksSectionComponent implements OnInit {
   ngOnInit(): void {
     this.myDataService.getAllSectionsByBoardId(this.boardId).subscribe((data) => {
       this.sections = data;
-      console.log(this.sections);
       this.loadTasks(this.sections);
     });
-
-    //console.log(this.user);
   }
 
   loadTasks(sections : Array<Section>) {
@@ -243,8 +244,6 @@ export class TasksSectionComponent implements OnInit {
     const dialogRef = this.dialog.open(TasksSectionNewStatusComponentDialog, {
       data: { newStatusName: this.newStatusName },
     });
-
-    //console.log(this.user);
     
     dialogRef.afterClosed().subscribe(result => {
       if (result != false && result != '' && result != undefined)
@@ -268,8 +267,6 @@ export class TasksSectionComponent implements OnInit {
       actualSectionName: section.name
     };
 
-    //console.log(this.user);
-
     this.newTask.section = section.name;
     this.newTask.creatorName = this.user.name;
     this.newTask.creatorId = this.user.id;
@@ -278,7 +275,7 @@ export class TasksSectionComponent implements OnInit {
     this.newTask.blocked = false;
 
     const dialogRef = this.dialog.open(TasksSectionNewTaskComponentDialog, {
-      data: { newTask: this.newTask },
+      data: { newTask: this.newTask, user: this.user, section: section },
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -299,7 +296,11 @@ export class TasksSectionComponent implements OnInit {
 
   openTaskDetailsDialog(task: Task): void {
     const dialogRef = this.dialog.open(TasksSectionTaskDetailsComponentDialog, {
-      data: { task: task, sections: this.sections, newComment: this.newComment },
+      data: { task: task, sections: this.sections, newComment: this.newComment, user: this.user },
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      this.ngOnInit();
     });
   }
 
@@ -362,9 +363,6 @@ export class TasksSectionComponent implements OnInit {
       assignee: task.assignee
     };
 
-    console.log(task.section);
-    console.log(section);
-
     let password = this.user.password;
     let userName = this.user.name;
 
@@ -390,18 +388,15 @@ export class TasksSectionComponent implements OnInit {
     function getUserId(service: MyDataService) {
       service.getUserId(userName, password).subscribe(result => { 
         newTaskDTO.creatorId = result.id;
-        console.log(1);
       }); 
     }
     function postNewTask(service: MyDataService) {
         service.postTask(newTaskDTO).subscribe();
-        console.log(2);
     }
     function updateTasks(service: MyDataService, tasks: Array<Task>, sectionId : number) {
       service.getAllTasksBySectionId(sectionId).subscribe((data) => {
         tasks = data;
       });
-      console.log(3);
     }
 
     setTimeout(() => {

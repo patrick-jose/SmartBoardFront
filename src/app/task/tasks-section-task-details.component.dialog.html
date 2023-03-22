@@ -11,16 +11,16 @@
                 <p>
                     <mat-form-field appearance="fill" style="width: 100%;" *ngIf="editEnabled">
                         <mat-label>Status</mat-label>
-                        <mat-select>
-                        <mat-option value="option" *ngFor="let section of data.sections" [(ngModel)]="data.task.sectionId">{{section.name}}</mat-option>
+                        <mat-select [(ngModel)]="data.task.sectionId">
+                        <mat-option [value]="section.id" *ngFor="let section of data.sections">{{section.name}}</mat-option>
                         </mat-select>
                         <mat-hint align="end">Status ^</mat-hint>
                     </mat-form-field>
                     <br>
                     <mat-form-field appearance="fill" style="width: 100%;" *ngIf="editEnabled">
                         <mat-label>Assignee</mat-label>
-                        <mat-select>
-                        <mat-option value="option" *ngFor="let user of data.users" [(ngModel)]="data.task.assigneeId">{{user.name}}</mat-option>
+                        <mat-select [(ngModel)]="data.task.assigneeId">
+                        <mat-option [value]="user.id" *ngFor="let user of data.users">{{user.name}}</mat-option>
                         </mat-select>
                         <mat-hint align="end">Users ^</mat-hint>
                     </mat-form-field>
@@ -65,12 +65,9 @@
             <mat-card-header style="padding: 40px 0px 20px 0px;">
                 <mat-card-title>Comments:</mat-card-title>
             </mat-card-header>
-            <mat-form-field appearance="fill" style="width: 95%; margin: auto;" [ngModel]="data.newComment.content">
-                <textarea matInput ></textarea>           
+            <mat-form-field appearance="fill" style="width: 95%; margin: auto;">
+                <textarea matInput [(ngModel)]="this.data.newComment.content"></textarea>           
             </mat-form-field>
-
-            <div>{{data.newComment.content}}</div>
-
             <button mat-mini-fab matTooltip="Send" color="primary" style="right: -91%;" (click)="sendComment()">
                 <mat-icon (click)="sendComment()">send</mat-icon>   
             </button>
@@ -92,9 +89,9 @@
             </mat-form-field>   
         </div>
     </div>
-    <div mat-dialog-actions style="justify-content: center; padding: 0px 0px 10px 10px;" *ngIf="false">
+    <div mat-dialog-actions style="justify-content: center; padding: 0px 0px 10px 10px;" *ngIf="editEnabled">
         <button mat-raised-button (click)="onNoClick()">Discard</button>
-        <button mat-raised-button cdkFocusInitial>Save</button>
+        <button mat-raised-button cdkFocusInitial (click)="updateTask()">Save</button>
     </div>
 </div>
   

@@ -32,6 +32,9 @@ export class MyDataService {
   postTask(task: TaskDTO) {
     return this.http.post('https://localhost:8081/api/Task', task);
   }
+  updateTask(task: TaskDTO) {
+    return this.http.put('https://localhost:8081/api/Task', task);
+  }
   getSectionById(sectionId : number) {
     return this.http.get<Section>('https://localhost:8081/api/Section/GetSectionById?id=' + sectionId);
   }

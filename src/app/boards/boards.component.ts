@@ -43,16 +43,13 @@ export class BoardsComponent implements OnInit {
 
     function selectNewBoard(tabs: Array<Board>, selected : FormControl) {
         selected.setValue(tabs.length - 1);
-        console.log("2");
       }
       function postNewBoard(service: MyDataService) {
         service.postBoard(newTab).subscribe();
-        console.log("1");
       }
       function updateTabs(service: MyDataService, tabs: Array<Board>) {
         service.getBoards().subscribe((data) => {
           tabs = data;
-          console.log("3");
         });
       }
 
