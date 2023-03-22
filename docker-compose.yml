@@ -19,7 +19,7 @@ services:
       - smartboard-network
 
   SmartBoardService:
-    image: smartboardservice
+    image: patrickamaral/smartboardservice:latest
     build:
       context: .
       dockerfile: SmartBoardService/Dockerfile
@@ -32,7 +32,7 @@ services:
       - smartboard-network
 
   SmartBoardWebAPI:
-    image: smartboardwebapi
+    image: patrickamaral/smartboardwebapi:latest
     build:
       context: .
       dockerfile: SmartBoardWebAPI/Dockerfile
@@ -50,10 +50,10 @@ services:
       - '${HOME}/.aspnet/https:/root/.aspnet/https/'
 
   SmartBoardFront:
-    container_name: smartboarfront
+    container_name: smartboardfront
     ports:
         - '4200:80'
-    image: smartboardfront
+    image: patrickamaral/smartboardfront:latest
     networks:
         - smartboard-network
 
